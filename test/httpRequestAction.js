@@ -5,7 +5,7 @@ const nock       = require('nock');
 
 const messages = require('elasticio-node').messages;
 
-const processAction = require('../lib/actions/httpRequest').process;
+const processAction = require('../lib/actions/httpRequestAction').process;
 
 describe('httpRequest action', () => {
     describe('when all params is correct', () => {
@@ -254,8 +254,9 @@ describe('httpRequest action', () => {
                                     value: '"world"'
                                 }
                             ],
-                            encoding: 'form-data'
-                        }
+                            contentType: 'multipart/form-data'
+                        },
+                        headers: []
                     }
                 };
 

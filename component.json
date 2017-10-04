@@ -10,10 +10,11 @@
       }
     }
   },
-  "actions": {
-    "httpRequest": {
-      "main": "./lib/actions/httpRequest.js",
+  "triggers": {
+    "httpRequestTrigger": {
+      "main": "./lib/triggers/httpRequestTrigger.js",
       "title": "HTTP request",
+      "type": "polling",
       "metadata": {
         "out": {}
       },
@@ -22,6 +23,22 @@
             "label": "REST API",
             "required": true,
             "viewClass": "RESTAPIView"
+        }
+      }
+    }
+  },
+  "actions": {
+    "httpRequestAction": {
+      "main": "./lib/actions/httpRequestAction.js",
+      "title": "HTTP request",
+      "metadata": {
+        "out": {}
+      },
+      "fields": {
+        "reader": {
+          "label": "REST API",
+          "required": true,
+          "viewClass": "RESTAPIView"
         }
       }
     }
