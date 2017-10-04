@@ -50,54 +50,6 @@ describe('httpRequest action', () => {
             });
         });
 
-        // ['basic', 'digest'].forEach((authType, i) => {
-        //     it(`should make request with http ${authType} auth`, done => {
-        //         const msg = {
-        //             body: {
-        //                 url: 'http://example.com'
-        //             }
-        //         };
-        //
-        //         const cfg = {
-        //             reader: {
-        //                 url: 'url',
-        //                 method: 'GET',
-        //                 auth: {
-        //                     [authType]: {
-        //                         username: 'John',
-        //                         password: 'Doe'
-        //                     }
-        //                 }
-        //             }
-        //         };
-        //
-        //         const responseMessage = `hello world ${i}`;
-        //
-        //         if (authType === 'basic') {
-        //             nock(jsonata(cfg.reader.url).evaluate(msg.body))
-        //                 .intercept('/', cfg.reader.method)
-        //                 .basicAuth({
-        //                     user: cfg.reader.auth.basic.username,
-        //                     pass: cfg.reader.auth.basic.password
-        //                 })
-        //                 .delay(20 + Math.random() * 200)
-        //                 .reply(() => {
-        //                     done();
-        //                 });
-        //         } else {
-        //             // TODO make the working test of digest auth
-        //             nock(jsonata(cfg.reader.url).evaluate(msg.body))
-        //                 .get('/')
-        //                 .delay(20 + Math.random() * 200)
-        //                 .reply(function(uri, requestBody) {
-        //                     done();
-        //                 });
-        //         }
-        //
-        //         processAction(msg, cfg);
-        //     });
-        // });
-
         it('should pass 1 header properly', done => {
             const msg = {
                 body: {
@@ -264,8 +216,6 @@ describe('httpRequest action', () => {
 
                 nock(jsonata(cfg.reader.url).evaluate(msg.body))
                     .post('/', function(body) {
-                        // console.log('BBBODY', body.replace(/\n/g, ''));
-                        console.log("body.replace('-')", body.replace(/[\n\r]/g, ''));
                         return body.replace(/[\n\r]/g, '').match(/foo.+bar.+baz.+qwe.+hello.+world/);
                     })
                     .delay(20 + Math.random() * 200)
