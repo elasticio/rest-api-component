@@ -24,11 +24,7 @@ Use this part to add as many headers as necessary. If REST API requires an [auth
 
 ## Body
 
-When HTTP Method is not `GET` then the Body part is switched on.
-
-![alt text](https://cdn.elastic.io/documentation/rest-api-component-put-body.png "REST API component Body field")
-
-In current view, it is possible to input the body of the HTTP call. The type of body depends on the content type which is `application/json` in the above example. The rendered field Body accepts only JSONata expressions.
+When HTTP Method is not `GET` then the Body part is switched on. It is possible to input the body of the HTTP call. The type of body depends on the content type which is `application/json` in the above example. The rendered field Body accepts only JSONata expressions.
 
 The Content type field can have different values and the required Body will be different accordingly:
 
@@ -40,9 +36,11 @@ The Content type field can have different values and the required Body will be d
 * `text/xml`
 * `text/html`
 
-## Authorisation methods
+### Sending JSON data
 
-> Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | [Headers](#headers) | [Body](#body) | **Authorisation**
+![alt text](https://cdn.elastic.io/documentation/restapi-component-body-json.png "REST API component Body field")
+
+## Authorisation methods
 
 Before REST API component can be used, authorisation information should be provided. This information is sent in HTTP Request header to the REST API provider. There are 3 available types:
 
