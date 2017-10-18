@@ -2,45 +2,27 @@
 
 The **REST API component** is a simple yet powerful component that allows you to connect to REST APIs without programming your own components and deploying them into the platform.
 
-* [Supported HTTP methods](#supported-http-methods)
-* [URL](#url)
 * [Headers](#headers)
 * [Body](#body)
 * [Authorisation methods](#authorisation-methods)
 
-In the example below the REST API component is used with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service").
+In the example below the REST API component is used with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service") to create a development team.
 
-![alt text](https://cdn.elastic.io/documentation/rest-api-first-look.png "REST API component first look")
+![alt text](https://cdn.elastic.io/documentation/restapi-component-featuresv2.png "REST API component features")
+*Numbers indicate: (1) the supported HTTP methods, (2) the URL of the REST API resource, (3) the HTTP call headers and (4) the body of the HTTP request.*
 
-> The authorisation type is selected earlier to this configuration. Only [the following types](#authorisation-methods) are supported: `No Auth`, `Basic Auth` and `API Key Auth`.
-
-## Supported HTTP methods
-
-> Jump to: [Top](#) | **Methods** | [URL](#url) | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
-
-REST API component supports standard HTTP requests like `GET`, `PUT`, `POST`, `DELETE` and `PATCH`.
-
-![alt text](https://cdn.elastic.io/documentation/rest-api-component-methods.png "REST API component methods")
-
-## URL
-
- >Jump to: [Top](#) | [Methods](#supported-http-methods) | **URL** | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
-
-The field where the URL of the REST API is inputted. This field accepts only JSONata expressions, meaning the URL address should be a `string`.
-
-![alt text](https://cdn.elastic.io/documentation/rest-api-component-url.png "REST API component URL field")
+1. REST API component supports all the HTTP methods of RESTful APIs like `GET`, `PUT`, `POST`, `DELETE` and `PATCH`.
+2. The URL of the REST API accepts only JSONata expressions, meaning the URL address should be a `string`.
+3. [Headers](#headers)
+4. [Body](#body)
 
 ## Headers
-
-> Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | **Headers** | [Body](#body) | [Authorisation](#authorisation-methods)
 
 Use this part to add as many headers as necessary. If REST API requires an [authorisation](#authorisation-methods) then the credentials are submitted in the header as it is shown below.
 
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-headers-get.png "REST API component Headers field")
 
 ## Body
-
-> Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | [Headers](#headers) | **Body** | [Authorisation](#authorisation-methods)
 
 When HTTP Method is not `GET` then the Body part is switched on.
 
