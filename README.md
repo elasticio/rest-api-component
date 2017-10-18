@@ -12,7 +12,7 @@ In the example below the REST API component is used with our own [REST API servi
 
 REST API component supports standard HTTP requests like `GET`, `PUT`, `POST`, `DELETE` and `PATCH`.
 
-![alt text](https://cdn.elastic.io/documentation/rest-api-component-,ethods.png "REST API component methods")
+![alt text](https://cdn.elastic.io/documentation/rest-api-component-methods.png "REST API component methods")
 
 ## URL
 
