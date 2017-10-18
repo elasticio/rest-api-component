@@ -63,6 +63,7 @@ The Content type field can have different values and the required Body will be d
 * `text/html`
 
 ## Authorisation methods
+ 
 Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | [Headers](#headers) | [Body](#body) | **Authorisation**
 ---
 
