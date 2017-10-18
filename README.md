@@ -14,10 +14,9 @@ In the example below the REST API component is used with our own [REST API servi
 
 > The authorisation type is selected earlier to this configuration. Only [the following types](#authorisation-methods) are supported: `No Auth`, `Basic Auth` and `API Key Auth`.
 
-## Supported HTTP methods \
+## Supported HTTP methods
 
-
-Jump to: [Top](#) | **Methods** | [URL](#url) | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
+> Jump to: [Top](#) | **Methods** | [URL](#url) | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
 
 REST API component supports standard HTTP requests like `GET`, `PUT`, `POST`, `DELETE` and `PATCH`.
