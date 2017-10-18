@@ -15,6 +15,7 @@ In the example below the REST API component is used with our own [REST API servi
 > The authorisation type is selected earlier to this configuration. Only [the following types](#authorisation-methods) are supported: `No Auth`, `Basic Auth` and `API Key Auth`.
 
 ## Supported HTTP methods
+
 Jump to: [Top](#) | **Methods** | [URL](#url) | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
 
@@ -23,6 +24,7 @@ REST API component supports standard HTTP requests like `GET`, `PUT`, `POST`, `D
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-methods.png "REST API component methods")
 
 ## URL
+
 Jump to: [Top](#) | [Methods](#supported-http-methods) | **URL** | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
 
@@ -31,6 +33,7 @@ The field where the URL of the REST API is inputted. This field accepts only JSO
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-url.png "REST API component URL field")
 
 ## Headers
+
 Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | **Headers** | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
 
@@ -39,6 +42,7 @@ Use this part to add as many headers as necessary. If REST API requires an [auth
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-headers-get.png "REST API component Headers field")
 
 ## Body
+
 Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | [Headers](#headers) | **Body** | [Authorisation](#authorisation-methods)
 ---
 
