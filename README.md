@@ -2,6 +2,12 @@
 
 The **REST API component** is a simple yet powerful component that allows you to connect to REST APIs without programming your own components and deploying them into the platform.
 
+* [Supported HTTP methods](#supported-http-methods)
+* [URL](#url)
+* [Headers](#headers)
+* [Body](#body)
+* [Authorisation methods](#authorisation-methods)
+
 In the example below the REST API component is used with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service").
 
 ![alt text](https://cdn.elastic.io/documentation/rest-api-first-look.png "REST API component first look")
