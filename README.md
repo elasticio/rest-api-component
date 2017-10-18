@@ -16,6 +16,7 @@ In the example below the REST API component is used with our own [REST API servi
 
 ## Supported HTTP methods
 
+
 Jump to: [Top](#) | **Methods** | [URL](#url) | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
 
@@ -24,6 +25,7 @@ REST API component supports standard HTTP requests like `GET`, `PUT`, `POST`, `D
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-methods.png "REST API component methods")
 
 ## URL
+
 
 Jump to: [Top](#) | [Methods](#supported-http-methods) | **URL** | [Headers](#headers) | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
@@ -34,6 +36,7 @@ The field where the URL of the REST API is inputted. This field accepts only JSO
 
 ## Headers
 
+
 Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | **Headers** | [Body](#body) | [Authorisation](#authorisation-methods)
 ---
 
@@ -42,6 +45,7 @@ Use this part to add as many headers as necessary. If REST API requires an [auth
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-headers-get.png "REST API component Headers field")
 
 ## Body
+
 
 Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | [Headers](#headers) | **Body** | [Authorisation](#authorisation-methods)
 ---
@@ -63,7 +67,8 @@ The Content type field can have different values and the required Body will be d
 * `text/html`
 
 ## Authorisation methods
- 
+
+
 Jump to: [Top](#) | [Methods](#supported-http-methods) | [URL](#url) | [Headers](#headers) | [Body](#body) | **Authorisation**
 ---
 
