@@ -38,7 +38,12 @@ The Content type field can have different values and the required Body will be d
 
 ### Sending JSON data
 
-![alt text](https://cdn.elastic.io/documentation/restapi-component-body-json.png "REST API component Body field")
+Here is how to send a JSON data in the body. The body input part will be validated as a JSONata expression.
+
+![alt text](https://cdn.elastic.io/documentation/restapi-component-body-json.png "REST API component Body sending JSON data")
+
+- [ ] change the picture to include variable in the JSON
+- [ ] Put and example of XML similarly with a variable
 
 ## Authorisation methods
 
