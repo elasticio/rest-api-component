@@ -40,10 +40,24 @@ The Content type field can have different values and the required Body will be d
 
 Here is how to send a JSON data in the body. The body input part will be validated as a JSONata expression.
 
-![alt text](https://cdn.elastic.io/documentation/restapi-component-body-json.png "REST API component Body sending JSON data")
+![alt text](https://cdn.elastic.io/documentation/restapi-component-body-json-var.png "REST API component Body sending JSON data")
+*Example shows the JSON in the body where the value of the `name` parameter is mapped using the value of `project_name` from the previous step of integration.*
 
-- [ ] change the picture to include variable in the JSON
-- [ ] Put and example of XML similarly with a variable
+### Sending XML data
+
+To send an `XML` data set the content type to `application/xml` or `text/xml` and place the `XML` in the body input field between double-quotes like:
+
+```
+"
+<note>
+  <to>" & fname & "</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+"
+```
+Use a JSONata expression to include and map any values coming from the previous steps as it is done with `fname` field in above example. In the final mapping it will be replaced with a value. Note that the rest of `XML` will be passed as a `string`.
 
 ## Authorisation methods
 
