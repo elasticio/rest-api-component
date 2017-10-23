@@ -6,23 +6,23 @@ The **REST API component** is a simple yet powerful component that allows you to
 *   [Body](#body)
 *   [Authorisation methods](#authorisation-methods)
 
-In the example below the REST API component is used with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service") to create a development team.
+The example below shows the REST API component with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service") to create a development team.
 
 ![alt text](https://cdn.elastic.io/documentation/restapi-component-featuresv2.png "REST API component features")
-*Numbers indicate: (1) the supported HTTP methods, (2) the URL of the REST API resource, (3) the HTTP call headers and (4) the body of the HTTP request.*
+*Numbers show: (1) the supported HTTP methods, (2) the URL of the REST API resource, (3) the HTTP call headers and (4) the body of the HTTP request.*
 
 1.  REST API component supports all the HTTP methods of RESTful APIs like `GET`, `PUT`, `POST`, `DELETE` and `PATCH`.
-2.  The URL of the REST API accepts only JSONata expressions, meaning the URL address should be a `string`.
+2.  The URL of the REST API accepts JSONata expressions, meaning the URL address should be a `string`.
 3.  [Headers](#headers)
 4.  [Body](#body)
 
 ## Headers
 
-Use this part to add as many headers as necessary. If REST API requires an [authorisation](#authorisation-methods) then the credentials are submitted in the header as it is shown below.
+Use this part to add as many headers as necessary. If REST API requires an [authorisation](#authorisation-methods) then the credentials are submitted in the header as shown below.
 
 ![alt text](https://cdn.elastic.io/documentation/rest-api-component-headers-get.png "REST API component Headers field")
 
-Header fields should only be colon-separated name-value pairs in clear-text `string` format. Header value field accepts JSONata expressions therefore, every `string` should be inputted in the double-quotes.
+Header fields should be colon-separated name-value pairs in clear-text `string` format. Header value field accepts JSONata expressions therefore, every `string` should be inputted in the double-quotes.
 
 ## Body
 
@@ -59,12 +59,12 @@ To send an `XML` data set the content type to `application/xml` or `text/xml` an
 </note>
 "
 ```
-Use a JSONata expression to include and map any values coming from the previous steps as it is done with `fname` field in above example. In the final mapping it will be replaced with a value. Note that the rest of `XML` will be passed as a `string`.
+Use a JSONata expression to include and map any values coming from the previous steps like with `fname` field in above example. It will be replaced with a real value in the final mapping. Note that the rest of `XML` will be passed as a `string`.
 
 ## Authorisation methods
 
 Before REST API component can be used, authorisation information should be provided. This information is sent in HTTP Request header to the REST API provider. There are 3 available types:
 
-*   `No Auth` - used to work with completely open REST APIs
+*   `No Auth` - used to work with open REST APIs
 *   `Basic Auth` - used to provide login credentials like **username/password**
 *   `API Key Auth` - used to provide `API Key` to access the resource
