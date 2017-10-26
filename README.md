@@ -2,11 +2,13 @@
 
 The **REST API component** is a simple yet powerful component that allows you to connect to any REST API without programming your own components and deploying them into the platform.
 
+This document covers the following topics:
+
 *   [Introduction](#introduction)
 *   [Authorisation methods](#authorisation-methods)
-*   [Headers](#defining-http-headers)
-*   [Body](#defining-http-body)
-
+*   [Defining HTTP headers](#defining-http-headers)
+*   [Defining request body](#defining-http-body)
+*   [Known Limitations](#known-limitations)
 
 ## Introduction
 
