@@ -2,6 +2,8 @@
 
 The **REST API component** is a simple yet powerful component that allows you to connect to any REST API without programming your own components and deploying them into the platform.
 
+The REST API component will perform a single REST API call when executed. Incoming data can gets used to configure the API call made and the response from the API call will be the output.
+
 This document covers the following topics:
 
 *   [Introduction](#introduction)
@@ -24,14 +26,20 @@ The example below shows the development team creation using the REST API compone
 
 ## Authorisation methods
 
-Before REST API component can be used, authorisation information should be provided. This information is sent in HTTP request header to the REST API provider. There are 3 available types:
+To use the REST API component with any restricted access API provide the authorisation information.
+
+![alt text](https://cdn.elastic.io/documentation/restapi-component-auth.png "REST API component Basic authorisation")
+*Example above shows how to add the username/password to access the API during the integration flow design.*
+
+You can add the authorisation methods during the integration flow design or by going to your `Settings > Security credentials > REST client` and adding there.
+
+REST API component supports 3 authorisation types:
 
 *   `No Auth` - use this method to work with any open REST API
 *   `Basic Auth` - use it to provide login credentials like **username/password**
 *   `API Key Auth` - use it to provide `API Key` to access the resource
 
 Please note that the result of creating a credential is an HTTP header automatically placed for you. You can also specify the authorisation in the headers section directly.
-
 
 ## Defining HTTP headers
 
@@ -62,7 +70,7 @@ The **body input field** changes according to the chosen content type.
 Here is how to send a JSON data in the body. Change the **content type** to `application/json` and the **body input part** would change accordingly to accept JSON object. Please note that this field supports [JSONata](http://jsonata.org) expressions.
 
 ![alt text](https://cdn.elastic.io/documentation/restapi-component-body-json-var.png "REST API component Body sending JSON data")
-*Example shows the JSON in the body where the `name` parameter value is mapped using the value of `project_name` from the previous step of integration.*
+*Example shows the JSON in the body where the `name` parameter value gets mapped using the value of `project_name` from the previous step of integration.*
 
 ### Sending XML data
 
@@ -78,30 +86,58 @@ To send an `XML` data set the content type to `application/xml` or `text/xml` an
 </note>
 "
 ```
-Use a JSONata expression to include and map any values coming from the previous steps. It will be replaced with a real value in the final mapping. Note that the rest of `XML` will be passed as a `string`.
+Use a JSONata expression to include and map any values coming from the previous steps. It will replace the variable with a real value in the final mapping. Note that the rest of `XML` gets passed as a `string`.
 
 ### Sending Form data
 
-(content types `application/x-www-form-urlencoded` and `multipart/form-data`)
+To send a form data two content types are available:
 
-- [ ] explain the form type
-- [ ] give example and a screenshot
+*   `application/x-www-form-urlencoded` - used to submit simple values to a form
+*   `multipart/form-data` - used to submit (non-alphanumeric) data or file attachment in payload
 
+In both cases the payload gets transmitted in the message body.
+
+In case of `application/x-www-form-urlencoded` content type add the necessary parameters by giving the name and the values like:
+
+![alt text](https://cdn.elastic.io/documentation/restapi-component-body-form-simple.png "REST API component Body sending a simple form")
+*Please note that parameter value fields support [JSONata](http://jsonata.org) expressions.*
+
+This HTTP request would submit `key1=value1&key2=value2` in the message body.
+
+In case of `multipart/form-data` content type add the parameters similarly.
+
+![alt text](https://cdn.elastic.io/documentation/restapi-component-body-form-complex.png "REST API component Body sending a complex form")
+
+The transmitted HTTP request body would be:
+
+```
+--__X_ELASTICIO_BOUNDARY__
+Content-Disposition: form-data; name="part1"
+
+Please note that this fields supports [JSONata](http://jsonata.org) expressions.
+--__X_ELASTICIO_BOUNDARY__
+Content-Disposition: form-data; name="part2"
+
+<p>Some more text</p>
+--__X_ELASTICIO_BOUNDARY__--
+```
+
+Notice how different parts get separated by the boundary. This form is capable of supporting attachments as well.
 
 ## Known Limitations
 
-- [ ] Here we list the limitations
+**If the response content-type is anything else than `application/json` then the component will through an error and stop the execution**. In particular the REST API component still:
 
-*   HTTP Response code is ignored
-*   Can't handle anything else but JSON
 *   Can't handle XML Responses
 *   Can't handle multi-part responses
-*   Ignores and do not store HTTP Response headers
 *   Can't handle HTML/Plain-text responses
+
+> Make sure not to perform your tests using the [requestb.in](https://requestb.in/) since it responds with the `content-type: text/html`.
+
+Here are some further limitation of the REST API component:
+
+*   HTTP Response code gets ignored
+*   Ignores and does not store HTTP Response headers
 *   Can't handle redirects
-
-Also check if anything is missing from these:
-
-- [ ] https://github.com/elasticio/rest-api-component/issues/30
-- [ ] https://github.com/elasticio/rest-api-component/issues/20
-- [ ] https://github.com/elasticio/rest-api-component/issues/14
+*   No native `XML` support
+*   No attachment support
