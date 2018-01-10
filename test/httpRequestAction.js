@@ -343,7 +343,7 @@ describe('httpRequest action', () => {
            await processAction(msg, cfg);
 
            expect(messagesNewMessageWithBodyStub.lastCall.args[0])
-               .to.deep.equal(responseMessage);
+               .to.deep.equal({});
        });
     });
 });
