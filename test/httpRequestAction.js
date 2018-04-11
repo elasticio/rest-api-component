@@ -488,4 +488,43 @@ describe('httpRequest action', () => {
             }
         });
     });
+
+    describe('Handling error responses', () => {
+        describe('throw errors on failed calls is on', () => {
+
+            it('should throw error on HTTP response codes 400-999', async () => {
+                const method = 'GET';
+                const msg = {
+                    body: {
+                        url: 'http://example.com'
+                    }
+                };
+
+                const cfg = {
+                    reader: {
+                        url: 'url',
+                        method
+                    },
+                    auth: {},
+                    throwErrors: true
+                };
+
+                nock(jsonata(cfg.reader.url).evaluate(msg.body))
+                    .intercept('/', method)
+                    .delay(20 + Math.random() * 100)
+                    .reply(401);
+
+                let didThrow = false;
+                try {
+                    await processAction(msg, cfg);
+                    didThrow = true;
+                } catch (err) {
+                    // all ok
+                }
+                expect(didThrow).to.equal(false);
+            });
+
+        });
+
+    });
 });
