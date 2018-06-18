@@ -20,10 +20,10 @@
         "out": {}
       },
       "fields": {
-          "reader": {
-            "label": "REST API",
-            "required": true,
-            "viewClass": "RESTAPIView"
+        "reader": {
+          "label": "REST API",
+          "required": true,
+          "viewClass": "RESTAPIView"
         }
       }
     }
@@ -37,6 +37,11 @@
         "out": {}
       },
       "fields": {
+        "followRedirect": {
+          "label": "Follow redirect",
+          "viewClass": "CheckBoxView",
+          "required": true
+        },
         "reader": {
           "label": "REST API",
           "required": true,
