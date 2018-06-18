@@ -38,9 +38,13 @@
       },
       "fields": {
         "followRedirect": {
-          "label": "Follow redirect",
-          "viewClass": "CheckBoxView",
-          "required": true
+          "label": "Follow redirect mode",
+          "viewClass": "SelectView",
+          "model": {
+            "1": "Follow redirects",
+            "2": "Not follow redirects"
+          },
+          "prompt": "Choose an option"
         },
         "reader": {
           "label": "REST API",
