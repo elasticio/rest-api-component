@@ -42,9 +42,9 @@
           "viewClass": "SelectView",
           "model": {
             "1": "Follow redirects",
-            "2": "Not follow redirects"
+            "2": "Do not follow redirects"
           },
-          "prompt": "Choose an option"
+          "prompt": "Follow redirects (default)"
         },
         "reader": {
           "label": "REST API",
