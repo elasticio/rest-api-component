@@ -503,7 +503,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method
         },
-        followRedirect: "1",
+        followRedirect: "followRedirects",
         auth: {}
       };
 
@@ -532,7 +532,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method
         },
-        followRedirect: "2",
+        followRedirect: "doNotFollowRedirects",
         auth: {}
       };
 

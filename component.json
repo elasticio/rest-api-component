@@ -41,8 +41,8 @@
           "label": "Follow redirect mode",
           "viewClass": "SelectView",
           "model": {
-            "1": "Follow redirects",
-            "2": "Do not follow redirects"
+            "followRedirects": "Follow redirects",
+            "doNotFollowRedirects": "Do not follow redirects"
           },
           "prompt": "Follow redirects (default)"
         },
