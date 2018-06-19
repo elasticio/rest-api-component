@@ -513,7 +513,7 @@ describe('httpRequest action', () => {
           'Location': 'http://example.com/Login'
         })
         .get('/Login')
-        .reply(200, '{"state": "after redirection"}', {'Content-Type': 'application/json'});
+        .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
       await processAction(msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "after redirection"});
@@ -539,12 +539,14 @@ describe('httpRequest action', () => {
       nock('http://example.com')
         .get('/YourAccount')
         .reply(302, '{"state":"before redirection"}', {
-          'Location': 'http://example.com/Login'
+          'Location': 'http://example.com/Login',
+          "Content-Type": "application/json"
         })
         .get('/Login')
-        .reply(200, '{"state": "after redirection"}', {'Content-Type': 'application/json'});
+        .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
       await processAction(msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
     });
+
   });
 });
