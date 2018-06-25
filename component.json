@@ -37,6 +37,10 @@
         "out": {}
       },
       "fields": {
+        "dontThrowErrorFlg":{
+          "label": "Don`t throw Error on Failed Calls",
+          "viewClass": "CheckBoxView"
+        },
         "followRedirect": {
           "label": "Follow redirect mode",
           "viewClass": "SelectView",
