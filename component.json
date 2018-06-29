@@ -38,7 +38,8 @@
           }
         }
       }
-    },
+    }
+  },
     "actions": {
       "httpRequestAction": {
         "main": "./lib/actions/httpRequestAction.js",
@@ -70,4 +71,3 @@
       }
     }
   }
-}
