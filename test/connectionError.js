@@ -58,7 +58,7 @@ describe('connection error', () => {
         .delay(20 + Math.random() * 200)
         .replyWithError('something awful happened');
 
-    processAction.call(msg, cfg).then(result=> {
+    processAction(msg, cfg).then(result=> {
       expect(result).to.deep.equal({
         "errorCode": undefined,
         "errorMessage": "Error: something awful happened",
