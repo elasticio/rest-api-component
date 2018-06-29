@@ -149,10 +149,15 @@ for more information please see the
 
 ## Known Limitations
 
-**If the response content-type is anything else than `application/json` then the component will through an error and stop the execution**. In particular the REST API component still:
+The component can parse any of json and xml content types. 
+There are:
+application/json
+application/xml
+text/xml
+etc.
+If content type is not  exists  in response header, component will try parse response as json. If it get parse exception, it return response as is.
 
 *   Can't handle multi-part responses
-*   Can't handle HTML/Plain-text responses
 
 > Make sure not to perform your tests using the [requestb.in](https://requestb.in/) since it responds with the `content-type: text/html`.
 
