@@ -1,6 +1,6 @@
 {
   "title": "REST API",
-  "description": "A generic connector for accessing HTTP and REST APIs",
+  "description": "A generic connector for accessing HTTP and REST APIs .",
   "docsUrl": "https://github.com/elasticio/rest-api-component",
   "credentials": {
     "fields": {
