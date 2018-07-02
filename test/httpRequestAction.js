@@ -828,6 +828,64 @@ describe('httpRequest action', () => {
       await processAction(msg, cfg)
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
     });
+    it('redirect request false POST && dontThrowErrorFlg false', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://example.com/YourAccount'
+        }
+      };
+
+      const cfg = {
+        reader: {
+          url: 'url',
+          method
+        },
+        followRedirect: "doNotFollowRedirects",
+        auth: {}
+      };
+
+      nock('http://example.com')
+          .post('/YourAccount')
+          .reply(302, '{"state":"before redirection"}', {
+            'Location': 'http://example.com/Login',
+            "Content-Type": "application/json"
+          })
+          .get('/Login')
+          .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
+
+      await processAction(msg, cfg)
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
+    });
+    it('redirect request false POST && dontThrowErrorFlg false', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://example.com/YourAccount'
+        }
+      };
+
+      const cfg = {
+        reader: {
+          url: 'url',
+          method
+        },
+        followRedirect: "followRedirects",
+        auth: {}
+      };
+
+      nock('http://example.com')
+          .post('/YourAccount')
+          .reply(302, '{"state":"before redirection"}', {
+            'Location': 'http://example.com/Login',
+            "Content-Type": "application/json"
+          })
+          .get('/Login')
+          .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
+
+      await processAction(msg, cfg)
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "after redirection"});
+    });
   });
 
   describe('404 not found', () => {
