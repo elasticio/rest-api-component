@@ -26,13 +26,13 @@
     },
     "dependencies": {
         "@elastic.io/jsonata-moment": "1.0.14",
+        "blob-to-stream": "^1.0.3",
         "debug": "^3.1.0",
         "elasticio-node": "0.0.7",
         "elasticio-rest-node": "^1.1.1",
         "elasticio-sailor-nodejs": "2.1.0",
         "request": "^2.83.0",
         "request-promise": "^4.2.2",
-        "string-to-stream": "^1.1.1",
         "uuid": "^3.3.2",
         "xml2js": "^0.4.19",
         "xml2js-es6-promise": "^1.1.1"
