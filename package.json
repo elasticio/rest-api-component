@@ -34,6 +34,7 @@
         "http-request": "^0.7.0",
         "request": "^2.83.0",
         "request-promise": "^4.2.2",
+        "string-to-stream": "^1.1.1",
         "uuid": "^3.3.2",
         "v": "^0.3.0",
         "xml2js": "^0.4.19",
