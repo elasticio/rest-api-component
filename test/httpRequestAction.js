@@ -334,14 +334,8 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .replyWithError('something awful happened');
 
-      await processAction(msg, cfg)
-
-
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
-        "errorCode": undefined,
-        "errorMessage": "Error: something awful happened",
-        "errorStack": "RequestError: Error: something awful happened\n    at new RequestError (/home/nick/WebstormProjects/rest-api-component/node_modules/request-promise-core/lib/errors.js:14:15)\n    at Request.plumbing.callback (/home/nick/WebstormProjects/rest-api-component/node_modules/request-promise-core/lib/plumbing.js:87:29)\n    at Request.RP$callback [as _callback] (/home/nick/WebstormProjects/rest-api-component/node_modules/request-promise-core/lib/plumbing.js:46:31)\n    at self.callback (/home/nick/WebstormProjects/rest-api-component/node_modules/request/request.js:186:22)\n    at emitOne (events.js:116:13)\n    at Request.emit (events.js:211:7)\n    at Request.onRequestError (/home/nick/WebstormProjects/rest-api-component/node_modules/request/request.js:878:8)\n    at emitOne (events.js:116:13)\n    at OverriddenClientRequest.emit (events.js:211:7)\n    at /home/nick/WebstormProjects/rest-api-component/node_modules/nock/lib/request_overrider.js:222:11\n    at _combinedTickCallback (internal/process/next_tick.js:131:7)\n    at process._tickCallback (internal/process/next_tick.js:180:9)"
-      })
+      await processAction(msg, cfg);
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].errorMessage).to.eql("Error: something awful happened");
 
     });
   });
