@@ -30,7 +30,6 @@
         "elasticio-node": "0.0.7",
         "elasticio-rest-node": "1.2.0",
         "elasticio-sailor-nodejs": "2.1.0",
-        "http-request": "^0.7.0",
         "request": "^2.83.0",
         "request-promise": "^4.2.2",
         "uuid": "^3.3.2",
