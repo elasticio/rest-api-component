@@ -1019,29 +1019,6 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql(rawString);
 
     });
-    // it('binary data response', async () => {
-    //   const inputMsg = {
-    //     body: {
-    //       url: 'http://test.com/png',
-    //     }
-    //   };
-    //
-    //   const cfg = {
-    //     reader: {
-    //       url: 'url',
-    //       method: 'GET',
-    //       headers: []
-    //     },
-    //     auth: {}
-    //   };
-    //
-    //   nock('http://test.com')
-    //       .get('/png')
-    //       .replyWithFile(200, __dirname + '/../logo.png', { 'Content-Type': 'image/png' });
-    //   await processAction(inputMsg, cfg);
-    //   console.log(messagesNewMessageWithBodyStub.lastCall.args[0]);
-    //
-    // });
   });
 
 
