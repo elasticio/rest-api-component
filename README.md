@@ -9,8 +9,12 @@ This document covers the following topics:
 *   [Introduction](#introduction)
 *   [Authorisation methods](#authorisation-methods)
 *   [Defining HTTP headers](#defining-http-headers)
-*   [Defining request body](#defining-http-body)
-*   [Working with XML Responses](#working-with-xml)
+*   [Defining request body](#defining-request-body)
+*   [Working with XML Response](#working-with-xml)
+*   [HTTP Headers in Response](#http-headers)
+*   [Redirection](#redirection)
+*   [Attachments](#attachments)
+*   [Exception handling](#exception-handling)
 *   [Known Limitations](#known-limitations)
 
 ## Introduction
@@ -147,7 +151,7 @@ In this case response body will be parsed to JSON using `xml2js` node library an
 for more information please see the 
 [Documenattion of XML2JS library](https://github.com/Leonidas-from-XIV/node-xml2js#options)
 
-##HTTP Headers 
+## HTTP Headers 
 
 You can to get HTTP response header only if ``Don`t throw Error on Failed Calls`` option is checked.
 In this case output structure of component will be: 
@@ -159,10 +163,25 @@ In this case output structure of component will be:
       statusMessage:<HTTP response status message>
     }
 ```
-##Redirection
+## Redirection
 If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.
 
 By default ``Follow redirect mode`` option has value ``Follow redirects`` 
+
+## Attachments
+Rest API component has opportunity of binary data sending. You just need choose ``multipart/form-data`` Content type and attachments from input message will be included to the request payload automatically.
+
+Rest-api component automatically load binary data to attachments with next conent types in response headers:
+* image/*
+* text/csv
+* application/msword
+* application/msexcel
+* application/pdf
+* application/octet-stream
+
+## Exception handling
+Rest API component uses exception handling logic below: 
+![Exception handling logic](https://user-images.githubusercontent.com/13310949/41960520-9bd468ca-79f8-11e8-83f4-d9b2096deb6d.png)
 
 ## Known Limitations
 
@@ -175,8 +194,6 @@ There are:
 
 `If content type is not  exists  in response header, component will try parse response as json. 
 If it get parse exception, it return response as is.`
-
-
 
 > Make sure not to perform your tests using the [requestb.in](https://requestb.in/) since it responds with the `content-type: text/html`.
 
