@@ -32,7 +32,9 @@ The example below shows the development team creation using the REST API compone
 
 ## Enable debug logging
 
-The component supports extended logging. `Enable debug logging` checkbox should be enabled for it. After that you cal check your logs in the logs console. 
+The component supports extended logging. `Enable debug logging` checkbox should be enabled for it. After that you may check your logs in the logs console. 
+
+*Note:* in case of using **ordinary flows**, adding of `DEBUG` environment variable in component repository will override disabled `Enable debug logging` checkbox during flow run, so all logs will be extended until an environment variable is removed.
 
 ## Authorisation methods
 
