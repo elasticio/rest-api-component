@@ -21,7 +21,7 @@
         "eslint-plugin-import": "^2.13.0",
         "mocha": "^3.5.3",
         "nock": "^9.0.14",
-        "sinon": "^3.2.1"
+        "sinon": "^3.3.0"
     },
     "dependencies": {
         "@elastic.io/jsonata-moment": "1.0.14",

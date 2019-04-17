@@ -9,10 +9,25 @@ const processAction = require('../lib/actions/httpRequestAction').process;
 
 describe('httpRequest action', () => {
   let messagesNewMessageWithBodyStub;
+  let emitter;
+  let currentlyEmitting = false;
 
   before(() => {
     messagesNewMessageWithBodyStub =
         stub(messages, 'newMessageWithBody').returns(Promise.resolve());
+  });
+
+  beforeEach(function() {
+    emitter = {
+      emit: stub().returns(new Promise((resolve) => {
+        expect(currentlyEmitting).to.be.false;
+        currentlyEmitting = true;
+        setTimeout(() => {
+          currentlyEmitting = false;
+          resolve();
+        }, 1)
+      }))
+    };
   });
 
 
@@ -45,7 +60,7 @@ describe('httpRequest action', () => {
               ];
             });
 
-        await processAction(msg, cfg);
+        await processAction.call(emitter, msg, cfg);
         expect(messagesNewMessageWithBodyStub.getCall(index).args[0])
             .to.deep.equal(responseMessage);
       });
@@ -95,7 +110,7 @@ describe('httpRequest action', () => {
               ];
             });
 
-        await processAction(msg, cfg);
+        await processAction.call(emitter, msg, cfg);
       })
     });
     it('should pass 1 header properly', done => {
@@ -136,7 +151,7 @@ describe('httpRequest action', () => {
             ];
           });
 
-      processAction(msg, cfg);
+      processAction.call(emitter, msg, cfg);
     });
     it('should pass multiple headers properly', done => {
       const msg = {
@@ -186,7 +201,7 @@ describe('httpRequest action', () => {
             ];
           });
 
-      processAction(msg, cfg);
+      processAction.call(emitter, msg, cfg);
     });
     describe('when request body is passed', () => {
       it('should properly pass raw body', done => {
@@ -225,7 +240,7 @@ describe('httpRequest action', () => {
               ];
             });
 
-        processAction(msg, cfg);
+        processAction.call(emitter, msg, cfg);
       });
       it('should properly pass formdata body', done => {
         const msg = {
@@ -276,7 +291,7 @@ describe('httpRequest action', () => {
               ];
             });
 
-        processAction(msg, cfg);
+        processAction.call(emitter, msg, cfg);
       });
     });
   });
@@ -306,7 +321,7 @@ describe('httpRequest action', () => {
           .intercept('/', method)
           .delay(20 + Math.random() * 200)
           .replyWithError('something awful happened');
-      await processAction(msg, cfg).catch(e => {
+      await processAction.call(emitter, msg, cfg).catch(e => {
         expect(e.message).to.be.eql('Error: something awful happened');
       });
 
@@ -334,7 +349,7 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .replyWithError('something awful happened');
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0].errorMessage).to.eql("Error: something awful happened");
 
     });
@@ -356,7 +371,7 @@ describe('httpRequest action', () => {
       };
 
       try {
-        processAction(msg, cfg);
+        processAction.call(emitter, msg, cfg);
       } catch (err) {
         expect(err.message).equal('Method is required');
 
@@ -378,7 +393,7 @@ describe('httpRequest action', () => {
       };
 
       try {
-        processAction(msg, cfg);
+        processAction.call(emitter, msg, cfg);
       } catch (err) {
         expect(err.message).equal('URL is required');
 
@@ -401,7 +416,7 @@ describe('httpRequest action', () => {
       };
 
       try {
-        processAction(msg, cfg);
+        processAction.call(emitter, msg, cfg);
       } catch (err) {
         expect(err.message).equal(
             `Method "${cfg.reader.method}" isn't one of the: DELETE,GET,PATCH,POST,PUT.`
@@ -437,7 +452,7 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .reply(204, responseMessage);
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
           .to.deep.equal({headers: {}, body: {}, statusCode: 204, statusMessage: null});
@@ -466,7 +481,7 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .reply(204, responseMessage);
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
           .to.deep.equal({});
@@ -495,7 +510,7 @@ describe('httpRequest action', () => {
             'Content-Type': 'application/xml'
           });
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
           .to.deep.equal(
@@ -530,7 +545,7 @@ describe('httpRequest action', () => {
             'Content-Type': 'application/xml'
           });
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
           .to.deep.equal(
@@ -560,7 +575,7 @@ describe('httpRequest action', () => {
           });
 
       try {
-        await processAction(msg, cfg);
+        await processAction.call(emitter, msg, cfg);
         throw new Error("This line should never be called because await above should throw an error");
       } catch (err) {
         // all good
@@ -598,7 +613,7 @@ describe('httpRequest action', () => {
           });
 
       try {
-        await processAction(msg, cfg);
+        await processAction.call(emitter, msg, cfg);
         throw new Error("This line should never be called because await above should throw an error");
       } catch (err) {
         // all good
@@ -632,7 +647,7 @@ describe('httpRequest action', () => {
               responseMessage
             ];
           });
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql({
         headers: {},
         body: {
@@ -672,7 +687,7 @@ describe('httpRequest action', () => {
               responseMessage
             ];
           });
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql(
           {
             id: "1",
@@ -708,7 +723,7 @@ describe('httpRequest action', () => {
               responseMessage
             ];
           });
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql(responseMessage);
 
     });
@@ -740,7 +755,7 @@ describe('httpRequest action', () => {
               responseMessage
             ];
           });
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
         "body": responseMessage,
         "headers": {},
@@ -778,7 +793,7 @@ describe('httpRequest action', () => {
           .get('/Login')
           .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
         "body": {
           "state": "after redirection"
@@ -815,7 +830,7 @@ describe('httpRequest action', () => {
           .get('/Login')
           .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "after redirection"});
     });
     it('redirect request false && dontThrowErrorFlg true', async () => {
@@ -845,7 +860,7 @@ describe('httpRequest action', () => {
           .get('/Login')
           .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
-      await processAction(msg, cfg);
+      await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
         headers:
             {
@@ -884,7 +899,7 @@ describe('httpRequest action', () => {
           .get('/Login')
           .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
-      await processAction(msg, cfg)
+      await processAction.call(emitter, msg, cfg)
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
@@ -913,7 +928,7 @@ describe('httpRequest action', () => {
           .get('/Login')
           .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
-      await processAction(msg, cfg)
+      await processAction.call(emitter, msg, cfg)
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
@@ -942,7 +957,7 @@ describe('httpRequest action', () => {
           .get('/Login')
           .reply(200, '{"state": "after redirection"}', {"Content-Type": "application/json"});
 
-      await processAction(msg, cfg)
+      await processAction.call(emitter, msg, cfg)
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "after redirection"});
     });
   });
@@ -1015,7 +1030,7 @@ describe('httpRequest action', () => {
               rawString
             ];
           });
-      await processAction(inputMsg, cfg);
+      await processAction.call(emitter, inputMsg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql(rawString);
 
     });
@@ -1042,7 +1057,7 @@ describe('httpRequest action', () => {
         auth: {}
       };
 
-      await processAction(msg, cfg).then(result => {
+      await processAction.call(emitter, msg, cfg).then(result => {
         console.log()
       });
       expect(messagesNewMessageWithBodyStub.lastCall.args[0].statusCode).to.eql(404);
@@ -1066,7 +1081,7 @@ describe('httpRequest action', () => {
         auth: {}
       };
 
-      await processAction(msg, cfg).then(result => {
+      await processAction.call(emitter, msg, cfg).then(result => {
         throw new Error(`Test case does not expect success response`)
       }).catch(e => {
         expect(e.message).to.be.eql('Code: 404 Message: Not Found');

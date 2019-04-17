@@ -41,6 +41,18 @@
           "label": "REST API",
           "required": true,
           "viewClass": "RESTAPIView"
+        },
+        "resultTransformExpression": {
+          "label": "Result JSONata Transform Expression",
+          "required": false,
+          "viewClass": "JSONataView",
+          "placeholder": "$",
+          "note": "After making the request, one can apply the above JSONata expression to the resulting output before it is passed to the next step.  Note that the structure of the message will change based on whether or not Errors on failed calls are thrown."
+        },
+        "splitResult": {
+          "label": "Split Result if it is an Array",
+          "viewClass": "CheckBoxView",
+          "note": "After making the request, and applying the above JSONata expression, if the result is an array and this box is checked, we will emit one message for each element of the array."
         }
       }
     }
@@ -75,6 +87,18 @@
           "label": "REST API",
           "required": true,
           "viewClass": "RESTAPIView"
+        },
+        "resultTransformExpression": {
+          "label": "Result JSONata Transform Expression",
+          "required": false,
+          "viewClass": "JSONataView",
+          "placeholder": "$",
+          "note": "After making the request, one can apply the above JSONata expression to the resulting output before it is passed to the next step.  Note that the structure of the message will change based on whether or not Errors on failed calls are thrown."
+        },
+        "splitResult": {
+          "label": "Split Result if it is an Array",
+          "viewClass": "CheckBoxView",
+          "note": "After making the request, and applying the above JSONata expression, if the result is an array and this box is checked, we will emit one message for each element of the array."
         }
       }
     }
