@@ -42,13 +42,6 @@
           "required": true,
           "viewClass": "RESTAPIView"
         },
-        "resultTransformExpression": {
-          "label": "Result JSONata Transform Expression",
-          "required": false,
-          "viewClass": "TextAreaView",
-          "placeholder": "$",
-          "note": "After making the request, one can apply the above JSONata expression to the resulting output before it is passed to the next step.  Note that the structure of the message will change based on whether or not Errors on failed calls are thrown."
-        },
         "splitResult": {
           "label": "Split Result if it is an Array",
           "viewClass": "CheckBoxView",
@@ -87,13 +80,6 @@
           "label": "REST API",
           "required": true,
           "viewClass": "RESTAPIView"
-        },
-        "resultTransformExpression": {
-          "label": "Result JSONata Transform Expression",
-          "required": false,
-          "viewClass": "TextAreaView",
-          "placeholder": "$",
-          "note": "After making the request, one can apply the above JSONata expression to the resulting output before it is passed to the next step.  Note that the structure of the message will change based on whether or not Errors on failed calls are thrown."
         },
         "splitResult": {
           "label": "Split Result if it is an Array",
