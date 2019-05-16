@@ -203,6 +203,94 @@ describe('httpRequest action', () => {
 
       processAction.call(emitter, msg, cfg);
     });
+    describe('split result', () => {
+      it('should emit each item if splitResult=true', async () => {
+        const msg = {
+          body: {
+            url: 'http://example.com'
+          }
+        };
+        const cfg = {
+          splitResult: true,
+          reader: {
+            url: 'url',
+            method: 'POST',
+          },
+          auth: {}
+        };
+        const responseMessage = ['first', 'second', 'third'];
+        nock(jsonata(cfg.reader.url).evaluate(msg.body))
+        .post('/')
+        .delay(20 + Math.random() * 200)
+        .reply(function (uri, requestBody) {
+          return [
+            200,
+            responseMessage
+          ];
+        });
+        await processAction.call(emitter, msg, cfg);
+        expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
+        expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
+        expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
+        expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+      });
+      it('should emit array of item if splitResult=false', async () => {
+        const msg = {
+          body: {
+            url: 'http://example.com'
+          }
+        };
+        const cfg = {
+          splitResult: false,
+          reader: {
+            url: 'url',
+            method: 'POST',
+          },
+          auth: {}
+        };
+        const responseMessage = ['first', 'second', 'third'];
+        nock(jsonata(cfg.reader.url).evaluate(msg.body))
+        .post('/')
+        .delay(20 + Math.random() * 200)
+        .reply(function (uri, requestBody) {
+          return [
+            200,
+            responseMessage
+          ];
+        });
+        await processAction.call(emitter, msg, cfg);
+        expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
+        expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
+      });
+      it('should be ignored if item is not array splitResult=false', async () => {
+        const msg = {
+          body: {
+            url: 'http://example.com'
+          }
+        };
+        const cfg = {
+          splitResult: true,
+          reader: {
+            url: 'url',
+            method: 'POST',
+          },
+          auth: {}
+        };
+        const responseMessage = {data: 'not array'};
+        nock(jsonata(cfg.reader.url).evaluate(msg.body))
+        .post('/')
+        .delay(20 + Math.random() * 200)
+        .reply(function (uri, requestBody) {
+          return [
+            200,
+            responseMessage
+          ];
+        });
+        await processAction.call(emitter, msg, cfg);
+        expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
+        expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
+      });
+    });
     describe('when request body is passed', () => {
       it('should properly pass raw body', done => {
         const msg = {
