@@ -1,5 +1,6 @@
 const jsonata = require('@elastic.io/jsonata-moment');
-const {stub} = require('sinon');
+const sinon = require('sinon');
+const {stub} = sinon;
 const {expect} = require('chai');
 const nock = require('nock');
 
@@ -8,16 +9,10 @@ const messages = require('elasticio-node').messages;
 const processAction = require('../lib/actions/httpRequestAction').process;
 
 describe('httpRequest action', () => {
-  let messagesNewMessageWithBodyStub;
   let emitter;
   let currentlyEmitting = false;
-
-  before(() => {
-    messagesNewMessageWithBodyStub =
-        stub(messages, 'newMessageWithBody').returns(Promise.resolve());
-  });
-
   beforeEach(function() {
+    sinon.restore();
     emitter = {
       emit: stub().returns(new Promise((resolve) => {
         expect(currentlyEmitting).to.be.false;
@@ -30,10 +25,102 @@ describe('httpRequest action', () => {
     };
   });
 
+  describe('split result', () => {
+    it('should emit each item if splitResult=true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
+      const msg = {
+        body: {
+          url: 'http://example.com'
+        }
+      };
+      const cfg = {
+        splitResult: true,
+        reader: {
+          url: 'url',
+          method: 'POST',
+        },
+        auth: {}
+      };
+      const responseMessage = ['first', 'second', 'third'];
+      nock(jsonata(cfg.reader.url).evaluate(msg.body))
+      .intercept('/', 'POST')
+      .reply(function (uri, requestBody) {
+        return [
+          200,
+          responseMessage
+        ];
+      });
+      await processAction.call(emitter, msg, cfg);
+      expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
+      expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
+      expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+    });
+    it('should emit array of item if splitResult=false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
+      const msg = {
+        body: {
+          url: 'http://example.com'
+        }
+      };
+      const cfg = {
+        splitResult: false,
+        reader: {
+          url: 'url',
+          method: 'POST',
+        },
+        auth: {}
+      };
+      const responseMessage = ['first', 'second', 'third'];
+      nock(jsonata(cfg.reader.url).evaluate(msg.body))
+      .post('/')
+      .delay(20 + Math.random() * 200)
+      .reply(function (uri, requestBody) {
+        return [
+          200,
+          responseMessage
+        ];
+      });
+      await processAction.call(emitter, msg, cfg);
+      expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
+    });
+    it('splitResult=true should be ignored if item is not array', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
+      const msg = {
+        body: {
+          url: 'http://example.com'
+        }
+      };
+      const cfg = {
+        splitResult: true,
+        reader: {
+          url: 'url',
+          method: 'POST',
+        },
+        auth: {}
+      };
+      const responseMessage = { data: 'not array' };
+      nock(jsonata(cfg.reader.url).evaluate(msg.body))
+      .post('/')
+      .delay(20 + Math.random() * 200)
+      .reply(function (uri, requestBody) {
+        return [
+          200,
+          responseMessage
+        ];
+      });
+      await processAction.call(emitter, msg, cfg);
+      expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
+    });
+  });
+
 
   describe('when all params is correct', () => {
     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method, index) => {
       it(`should properly execute ${method} request`, async () => {
+        let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
         const msg = {
           body: {
             url: 'http://example.com'
@@ -61,12 +148,13 @@ describe('httpRequest action', () => {
             });
 
         await processAction.call(emitter, msg, cfg);
-        expect(messagesNewMessageWithBodyStub.getCall(index).args[0])
-            .to.deep.equal(responseMessage);
+        expect(messagesNewMessageWithBodyStub.args[0][0])
+            .to.eql(responseMessage);
       });
     });
     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method) => {
       it(`jsonata correctness ${method} test`, async () => {
+
         const msg = {body: {}};
         const cfg = {
           reader: {
@@ -114,6 +202,7 @@ describe('httpRequest action', () => {
       })
     });
     it('should pass 1 header properly', done => {
+
       const msg = {
         body: {
           url: 'http://example.com'
@@ -202,94 +291,6 @@ describe('httpRequest action', () => {
           });
 
       processAction.call(emitter, msg, cfg);
-    });
-    describe('split result', () => {
-      it('should emit each item if splitResult=true', async () => {
-        const msg = {
-          body: {
-            url: 'http://example.com'
-          }
-        };
-        const cfg = {
-          splitResult: true,
-          reader: {
-            url: 'url',
-            method: 'POST',
-          },
-          auth: {}
-        };
-        const responseMessage = ['first', 'second', 'third'];
-        nock(jsonata(cfg.reader.url).evaluate(msg.body))
-        .post('/')
-        .delay(20 + Math.random() * 200)
-        .reply(function (uri, requestBody) {
-          return [
-            200,
-            responseMessage
-          ];
-        });
-        await processAction.call(emitter, msg, cfg);
-        expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
-        expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
-        expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
-        expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
-      });
-      it('should emit array of item if splitResult=false', async () => {
-        const msg = {
-          body: {
-            url: 'http://example.com'
-          }
-        };
-        const cfg = {
-          splitResult: false,
-          reader: {
-            url: 'url',
-            method: 'POST',
-          },
-          auth: {}
-        };
-        const responseMessage = ['first', 'second', 'third'];
-        nock(jsonata(cfg.reader.url).evaluate(msg.body))
-        .post('/')
-        .delay(20 + Math.random() * 200)
-        .reply(function (uri, requestBody) {
-          return [
-            200,
-            responseMessage
-          ];
-        });
-        await processAction.call(emitter, msg, cfg);
-        expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-        expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
-      });
-      it('should be ignored if item is not array splitResult=false', async () => {
-        const msg = {
-          body: {
-            url: 'http://example.com'
-          }
-        };
-        const cfg = {
-          splitResult: true,
-          reader: {
-            url: 'url',
-            method: 'POST',
-          },
-          auth: {}
-        };
-        const responseMessage = {data: 'not array'};
-        nock(jsonata(cfg.reader.url).evaluate(msg.body))
-        .post('/')
-        .delay(20 + Math.random() * 200)
-        .reply(function (uri, requestBody) {
-          return [
-            200,
-            responseMessage
-          ];
-        });
-        await processAction.call(emitter, msg, cfg);
-        expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-        expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
-      });
     });
     describe('when request body is passed', () => {
       it('should properly pass raw body', done => {
@@ -383,8 +384,6 @@ describe('httpRequest action', () => {
       });
     });
   });
-
-
   describe('connection error', () => {
 
 
@@ -416,6 +415,7 @@ describe('httpRequest action', () => {
     });
 
     it('connection error && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -517,6 +517,7 @@ describe('httpRequest action', () => {
 
   describe('Non-JSON responses', () => {
     it('No response body && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -542,10 +543,11 @@ describe('httpRequest action', () => {
 
       await processAction.call(emitter, msg, cfg);
 
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
-          .to.deep.equal({headers: {}, body: {}, statusCode: 204, statusMessage: null});
+      expect(messagesNewMessageWithBodyStub.args[0][0])
+          .to.eql({headers: {}, body: {}, statusCode: 204, statusMessage: null});
     });
     it('No response body && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -575,6 +577,7 @@ describe('httpRequest action', () => {
           .to.deep.equal({});
     });
     it('Valid XML Response && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -610,6 +613,7 @@ describe('httpRequest action', () => {
           });
     });
     it('Valid XML Response && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -708,6 +712,7 @@ describe('httpRequest action', () => {
       }
     });
     it('JSON string without content-type  && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -748,6 +753,7 @@ describe('httpRequest action', () => {
       });
     });
     it('JSON string without content-type  && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -784,6 +790,7 @@ describe('httpRequest action', () => {
           });
     });
     it('XML string without content-type   && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -816,6 +823,7 @@ describe('httpRequest action', () => {
 
     });
     it('XML string without content-type   && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -856,6 +864,7 @@ describe('httpRequest action', () => {
 
   describe('redirection', () => {
     it('redirect request true && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'GET';
       const msg = {
         body: {
@@ -894,6 +903,7 @@ describe('httpRequest action', () => {
       });
     });
     it('redirect request true && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'GET';
       const msg = {
         body: {
@@ -922,6 +932,7 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "after redirection"});
     });
     it('redirect request false && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'GET';
       const msg = {
         body: {
@@ -962,6 +973,7 @@ describe('httpRequest action', () => {
 
     });
     it('redirect request false && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'GET';
       const msg = {
         body: {
@@ -991,6 +1003,7 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -1020,6 +1033,7 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({state: "before redirection"});
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const method = 'POST';
       const msg = {
         body: {
@@ -1051,6 +1065,7 @@ describe('httpRequest action', () => {
   });
   describe('attachments', () => {
     it('action message with attachments', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       const inputMsg = {
         body: {
           url: 'http://qwre.com',
@@ -1127,6 +1142,7 @@ describe('httpRequest action', () => {
 
   describe('404 not found', () => {
     it('404 not found && dontThrowErrorFlg true', async () => {
+      let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
       nock.restore();
       const method = 'GET';
       const msg = {
@@ -1176,5 +1192,4 @@ describe('httpRequest action', () => {
       });
     });
   });
-
 });
