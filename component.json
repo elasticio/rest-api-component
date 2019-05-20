@@ -20,6 +20,11 @@
         "out": {}
       },
       "fields": {
+        "reader": {
+          "label": "REST API",
+          "required": true,
+          "viewClass": "RESTAPIView"
+        },
         "dontThrowErrorFlg": {
           "label": "Don`t throw Error on Failed Calls",
           "viewClass": "CheckBoxView"
@@ -41,11 +46,6 @@
             "doNotFollowRedirects": "Do not follow redirects"
           },
           "prompt": "Follow redirects (default)"
-        },
-        "reader": {
-          "label": "REST API",
-          "required": true,
-          "viewClass": "RESTAPIView"
         }
       }
     }
@@ -59,6 +59,11 @@
         "out": {}
       },
       "fields": {
+        "reader": {
+          "label": "REST API",
+          "required": true,
+          "viewClass": "RESTAPIView"
+        },
         "dontThrowErrorFlg": {
           "label": "Don`t throw Error on Failed Calls",
           "viewClass": "CheckBoxView"
@@ -80,11 +85,6 @@
             "doNotFollowRedirects": "Do not follow redirects"
           },
           "prompt": "Follow redirects (default)"
-        },
-        "reader": {
-          "label": "REST API",
-          "required": true,
-          "viewClass": "RESTAPIView"
         }
       }
     }
