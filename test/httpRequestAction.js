@@ -543,8 +543,7 @@ describe('httpRequest action', () => {
 
       await processAction.call(emitter, msg, cfg);
 
-      expect(messagesNewMessageWithBodyStub.args[0][0])
-          .to.eql({headers: {}, body: {}, statusCode: 204, statusMessage: null});
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.exist;
     });
     it('No response body && dontThrowErrorFlg false', async () => {
       let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
