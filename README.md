@@ -27,7 +27,7 @@ The example below shows the development team creation using the REST API compone
 
 1.  HTTP methods and URL
  * REST API component supports the following HTTP methods: `GET`, `PUT`, `POST`, `DELETE` and `PATCH`.
- * The URL of the REST API accepts JSONata expressions, meaning the URL address evaluates [JSONata](http://jsonata.org/) expressions.
+ * The URL of the REST API resources. Accepts JSONata expressions, meaning the URL address evaluates [JSONata](http://jsonata.org/) expressions.
 2. Request Headers and Body
  * Definition of request [headers](#defining-http-headers)
  * Definition of request [body](#defining-http-body), if the HTTP method is not `GET`
