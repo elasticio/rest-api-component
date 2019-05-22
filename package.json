@@ -1,6 +1,6 @@
 {
     "name": "@elasticio/rest-api-component",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "REST API component",
     "scripts": {
         "test": "NODE_ENV=test mocha"
