@@ -38,6 +38,10 @@
           "label": "Enable debug logging",
           "viewClass": "CheckBoxView"
         },
+        "enableRebound": {
+          "label": "Enable Rebound for HTTP timeouts",
+          "viewClass": "CheckBoxView"
+        },
         "followRedirect": {
           "label": "Follow redirect mode",
           "viewClass": "SelectView",
