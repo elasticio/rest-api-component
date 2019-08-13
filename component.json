@@ -39,7 +39,7 @@
           "viewClass": "CheckBoxView"
         },
         "enableRebound": {
-          "label": "Enable Rebound for HTTP timeouts",
+          "label": "Retry on failure",
           "viewClass": "CheckBoxView"
         },
         "followRedirect": {
