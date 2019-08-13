@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const {stub} = sinon;
 const {expect} = require('chai');
 const nock = require('nock');
+const dns = require('dns');
 
 const messages = require('elasticio-node').messages;
 
@@ -466,10 +467,36 @@ describe('httpRequest action', () => {
       nock(jsonata(cfg.reader.url).evaluate(msg.body))
           .intercept('/', method)
           .delay(20 + Math.random() * 200)
-          .replyWithError('something awful happened');
+          .reply(408, 'Error');
 
           await processAction.call(emitter, msg, cfg);
           expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+    });
+
+    it('dns timeout && enableRebound true', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://example.com'
+        }
+      };
+
+      const cfg = {
+        enableRebound: true,
+        reader: {
+          url: 'url',
+          method
+        },
+        auth: {}
+      };
+
+      nock(jsonata(cfg.reader.url).evaluate(msg.body))
+          .intercept('/', method)
+          .delay(20 + Math.random() * 200)
+          .replyWithError({code: dns.TIMEOUT});
+
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
     });
   });
 
