@@ -25,6 +25,10 @@ describe('httpRequest action', () => {
     };
   });
 
+  let emit = {
+    emit: sinon.spy(),
+  };
+
   describe('split result', () => {
     it('should emit each item if splitResult=true', async () => {
       let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
@@ -440,6 +444,32 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0].errorMessage).to.eql("Error: something awful happened");
 
+    });
+
+    it('connection error && enableRebound true', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://example.com'
+        }
+      };
+
+      const cfg = {
+        enableRebound: true,
+        reader: {
+          url: 'url',
+          method
+        },
+        auth: {}
+      };
+
+      nock(jsonata(cfg.reader.url).evaluate(msg.body))
+          .intercept('/', method)
+          .delay(20 + Math.random() * 200)
+          .replyWithError('something awful happened');
+
+          await processAction.call(emitter, msg, cfg);
+          expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
     });
   });
 
