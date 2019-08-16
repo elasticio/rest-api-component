@@ -26,10 +26,6 @@ describe('httpRequest action', () => {
     };
   });
 
-  let emit = {
-    emit: sinon.spy(),
-  };
-
   describe('split result', () => {
     it('should emit each item if splitResult=true', async () => {
       let messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody').returns(Promise.resolve());
