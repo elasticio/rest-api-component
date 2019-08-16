@@ -430,6 +430,7 @@ describe('httpRequest action', () => {
 
       const cfg = {
         dontThrowErrorFlg: true,
+        enableRebound: true,
         reader: {
           url: 'url',
           method
@@ -442,8 +443,10 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .replyWithError('something awful happened');
 
-      await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].errorMessage).to.eql("Error: something awful happened");
+      await processAction.call(emitter, msg, cfg).catch(e => {
+        expect(e.message).to.be.eql('Error: something awful happened');
+        expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      });
 
     });
 
@@ -469,34 +472,10 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .reply(408, 'Error');
 
-          await processAction.call(emitter, msg, cfg);
-          expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
-    });
-
-    it('dns timeout && enableRebound true', async () => {
-      const method = 'POST';
-      const msg = {
-        body: {
-          url: 'http://example.com'
-        }
-      };
-
-      const cfg = {
-        enableRebound: true,
-        reader: {
-          url: 'url',
-          method
-        },
-        auth: {}
-      };
-
-      nock(jsonata(cfg.reader.url).evaluate(msg.body))
-          .intercept('/', method)
-          .delay(20 + Math.random() * 200)
-          .replyWithError({code: dns.TIMEOUT});
-
-      await processAction.call(emitter, msg, cfg);
-      expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      await processAction.call(emitter, msg, cfg).catch(e => {
+        expect(e.message).to.be.eql('Code: 408 Message: HTTP error');
+        expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      });
     });
   });
 
