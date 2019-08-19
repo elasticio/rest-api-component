@@ -468,10 +468,9 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .reply(408, 'Error');
 
-      await processAction.call(emitter, msg, cfg).catch(e => {
-        expect(e.message).to.be.eql('Code: 408 Message: HTTP error');
-        expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
-      });
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal('Code: 408 Message: HTTP error');
     });
   });
 
