@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const {stub} = sinon;
 const {expect} = require('chai');
 const nock = require('nock');
+const dns = require('dns');
 
 const messages = require('elasticio-node').messages;
 
@@ -425,6 +426,7 @@ describe('httpRequest action', () => {
 
       const cfg = {
         dontThrowErrorFlg: true,
+        enableRebound: true,
         reader: {
           url: 'url',
           method
@@ -437,9 +439,38 @@ describe('httpRequest action', () => {
           .delay(20 + Math.random() * 200)
           .replyWithError('something awful happened');
 
-      await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].errorMessage).to.eql("Error: something awful happened");
+      await processAction.call(emitter, msg, cfg).catch(e => {
+        expect(e.message).to.be.eql('Error: something awful happened');
+        expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      });
 
+    });
+
+    it('connection error && enableRebound true', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://example.com'
+        }
+      };
+
+      const cfg = {
+        enableRebound: true,
+        reader: {
+          url: 'url',
+          method
+        },
+        auth: {}
+      };
+
+      nock(jsonata(cfg.reader.url).evaluate(msg.body))
+          .intercept('/', method)
+          .delay(20 + Math.random() * 200)
+          .reply(408, 'Error');
+
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal('Code: 408 Message: HTTP error');
     });
   });
 
