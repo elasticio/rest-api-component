@@ -3,7 +3,8 @@
     "version": "1.0.1",
     "description": "REST API component",
     "scripts": {
-        "test": "NODE_ENV=test mocha --timeout 10000"
+        "pretest": "eslint lib test verifyCredentials.js",
+        "test": "mocha test/**/*.spec.js --timeout 10000"
     },
     "repository": {
         "type": "git",
@@ -30,6 +31,10 @@
         "elasticio-node": "0.0.9",
         "elasticio-rest-node": "1.2.1",
         "elasticio-sailor-nodejs": "2.2.3",
+        "eslint": "5.6.1",
+        "eslint-config-airbnb": "17.1.0",
+        "eslint-config-airbnb-base": "13.1.0",
+        "eslint-plugin-import": "2.14.0",
         "request": "2.83.0",
         "request-promise": "4.2.2",
         "uuid": "3.3.2",
