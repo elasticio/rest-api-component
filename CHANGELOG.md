@@ -1,3 +1,7 @@
+## 1.1.2 (September 06, 2019)
+
+* Fixing `new Buffer()` deprecated warning
+
 ## 1.1.0 (August 28, 2019)
 
 ### Added
