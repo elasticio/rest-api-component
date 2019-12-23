@@ -1,6 +1,6 @@
 ## 1.1.4 (December 23, 2019)
 
-* Update sailor version to 2.5.3
+* Update sailor version to 2.5.4
 
 ## 1.1.3 (December 07, 2019)
 
