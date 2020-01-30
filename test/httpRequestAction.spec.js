@@ -65,7 +65,7 @@ describe('httpRequest action', () => {
       };
 
       const refreshedToken = 'refreshed_token';
-      const tokenUri = 'https://example.com/oauth/token/';
+      const tokenUri = 'http://example.com/oauth/token/';
 
       const cfg = {
         reader: {
@@ -78,7 +78,7 @@ describe('httpRequest action', () => {
           oauth2: {
             clientId: 'e6b02a7d-eb7e-4090-b112-f78f68cd6022',
             clientSecret: 'e6b02a7d-eb7e-4090-b112-f78f68cd6022',
-            authUri: 'https://example.com/oauth/auth',
+            authUri: 'http://example.com/oauth/auth',
             tokenUri,
             keys: {
               access_token: 'token',
@@ -110,9 +110,9 @@ describe('httpRequest action', () => {
         ]);
 
 
-      const requestNock = nock(cfg.reader.url, {
+      const requestNock = nock(msg.body.url, {
         reqheaders: {
-          Authorization: `"Bearer ${refreshedToken}"`,
+          Authorization: `Bearer ${refreshedToken}`,
         },
       })
         .intercept('/', 'POST')
@@ -145,8 +145,8 @@ describe('httpRequest action', () => {
           oauth2: {
             clientId: 'e6b02a7d-eb7e-4090-b112-f78f68cd6022',
             clientSecret: 'e6b02a7d-eb7e-4090-b112-f78f68cd6022',
-            authUri: 'https://example.com/oauth/auth',
-            tokenUri: 'https://example.com/oauth/token',
+            authUri: 'http://example.com/oauth/auth',
+            tokenUri: 'http://example.com/oauth/token',
             keys: {
               access_token: 'token',
               token_type: 'Bearer',
@@ -158,9 +158,9 @@ describe('httpRequest action', () => {
         },
       };
 
-      const requestNock = nock(cfg.reader.url, {
+      const requestNock = nock(msg.body.url, {
         reqheaders: {
-          Authorization: `"Bearer ${cfg.auth.oauth2.keys.access_token}"`,
+          Authorization: `Bearer ${cfg.auth.oauth2.keys.access_token}`,
         },
       })
         .intercept('/', 'POST')
