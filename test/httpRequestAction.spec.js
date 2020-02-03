@@ -468,7 +468,8 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
       expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal(
-        'Code: 408\r\nMessage: HTTP error\r\nBody: Error',
+        `Code: 408 Message: HTTP error
+        Body: Error`,
       );
     });
   });
@@ -1242,7 +1243,7 @@ describe('httpRequest action', () => {
         throw new Error('Test case does not expect success response');
       }).catch((e) => {
         // TODO: should be 'Code: 404 Message: Not Found' but nock doesn't allow statusMessage to be mocked https://github.com/nock/nock/issues/469
-        expect(e.message).to.be.eql('Code: 404\r\nMessage: HTTP error');
+        expect(e.message).to.be.eql('Code: 404 Message: HTTP error');
       });
     });
   });
