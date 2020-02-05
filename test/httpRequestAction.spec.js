@@ -127,6 +127,75 @@ describe('httpRequest action', () => {
       expect(requestNock.isDone());
     });
 
+    it('should refresh token without `expires_in` parameter', async () => {
+      const msg = {
+        body: {
+          url: 'http://example.com',
+        },
+      };
+
+      const refreshedToken = 'refreshed_token';
+      const tokenUri = 'http://example.com/oauth/token/';
+
+      const cfg = {
+        reader: {
+          url: 'url',
+          method: 'POST',
+          headers: [],
+        },
+        auth: {
+          type: 'OAuth2',
+          oauth2: {
+            clientId: 'e6b02a7d-eb7e-4090-b112-f78f68cd6022',
+            clientSecret: 'e6b02a7d-eb7e-4090-b112-f78f68cd6022',
+            authUri: 'http://example.com/oauth/auth',
+            tokenUri,
+            keys: {
+              access_token: 'token',
+              token_type: 'Bearer',
+              refresh_token: 'refresh_token',
+            },
+          },
+        },
+      };
+
+      const responseMessage = {
+        access_token: refreshedToken,
+        token_type: 'Bearer',
+        refresh_token: 'refresh_token',
+      };
+
+      const refreshTokenNock = nock(tokenUri)
+        .post('/', {
+          refresh_token: cfg.auth.oauth2.keys.refresh_token,
+          grant_type: 'refresh_token',
+          client_id: cfg.auth.oauth2.clientId,
+          client_secret: cfg.auth.oauth2.clientSecret,
+        })
+        .reply((uri, requestBody) => [
+          200,
+          responseMessage,
+        ]);
+
+
+      const requestNock = nock(msg.body.url, {
+        reqheaders: {
+          Authorization: `Bearer ${refreshedToken}`,
+        },
+      })
+        .intercept('/', 'POST')
+        .reply((uri, requestBody) => [
+          200,
+          { success: true },
+        ]);
+
+      await processAction.call(emitter, msg, cfg);
+
+      expect(refreshTokenNock.isDone());
+      expect(requestNock.isDone());
+    });
+
+
     it('should send request with oauth2 headers, without refreshed token', async () => {
       const msg = {
         body: {
