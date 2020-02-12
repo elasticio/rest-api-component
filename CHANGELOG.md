@@ -1,4 +1,4 @@
-## 1.2.0(February 12, 2020)
+## 1.2.0(February 13, 2020)
 
 ### Added
 * Added new authentication strategy `OAuth2`
