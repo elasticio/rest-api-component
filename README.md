@@ -205,6 +205,10 @@ Rest API component uses exception handling logic below:
 
 ## Known Limitations
 
+### OAuth2
+1. Although `refresh_token` is optional with OAuth2, it is a known limitation that the platform may behave unexpectedly and therefore not properly create `authorization` header without it
+2. As a result, ensure to always include a `refresh_token` in the credentials step of the RESTAPI config to ensure reliable operation
+
 The component can parse any of json and xml content types. 
 There are:
 * application/json
