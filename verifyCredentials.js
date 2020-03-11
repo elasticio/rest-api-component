@@ -17,25 +17,27 @@ function verify(credentials) {
 
   if (type === authTypes.BASIC) {
     if (!basic.username) {
-      this.logger.info('Error: Username is required for basic auth');
+      this.logger.error('Error: Username is required for basic auth');
       throw new Error('Username is required for basic auth');
     }
 
     if (!basic.password) {
-      this.logger.info('Error: Password is required for basic auth');
+      this.logger.error('Error: Password is required for basic auth');
       throw new Error('Password is required for basic auth');
     }
   } else if (type === authTypes.OAUTH2) {
     const { keys } = oauth2;
+    let errMessage;
     if (!keys) {
-      this.logger.error('Error: OAuth2 provider hasn`t returned keys for current credentials');
-      throw new Error('OAuth2 provider hasn`t returned keys for current credentials');
+      errMessage = 'Error: OAuth2 provider hasn`t returned keys for current credentials';
     } else if (!keys.access_token) {
-      this.logger.error('Error: OAuth2 provider hasn`t returned an access_token: %s', keys);
-      throw new Error('OAuth2 provider hasn`t returned an access_token');
+      errMessage = `Error: OAuth2 provider hasn't returned an access_token: ${JSON.stringify(keys)}`;
     } else if (!keys.refresh_token) {
-      this.logger.error('Error: OAuth2 provider hasn`t returned a refresh_token. Possible reason: missing access_type:offline additional parameter');
-      throw new Error('OAuth2 provider hasn`t returned a refresh_token. Possible reason: missing access_type:offline additional parameter');
+      errMessage = 'Error: OAuth2 provider hasn`t returned a refresh_token. Possible reason: missing access_type:offline additional parameter';
+    }
+    if (errMessage) {
+      this.logger.error(errMessage);
+      throw new Error(errMessage);
     }
   }
 
