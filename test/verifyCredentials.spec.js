@@ -25,6 +25,15 @@ describe('verifyCredentials test', () => {
       },
     };
 
+    it('should succeed', async () => {
+      credentials.auth.oauth2.keys = {
+        access_token: 'access_token',
+        refresh_token: 'refresh_token',
+      };
+      const result = await verify.call(emitter, credentials);
+      expect(result).equal(true);
+    });
+
     it('should fail if auth.oauth2.keys is missing', async () => {
       credentials.auth.oauth2.keys = undefined;
       try {
