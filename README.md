@@ -223,7 +223,7 @@ Attachments limitations:
 2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
 
 OAuth2 authentication strategy limitation: [Access Token Response](https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/) contains `refresh_token` optional property, but due to EIO platform limitation it is required.
-Possible solution - use access_type:offline in additional parameters.
+Possible solution - use access_type:offline in additional parameters (may not work in some cases).
 
 [circle-image]: https://circleci.com/gh/elasticio/rest-api-component.svg?style=svg&circle-token=2bf8e1f60133011d1fdea9505afdbabbd12b0c7b
 [circle-url]: https://circleci.com/gh/elasticio/rest-api-component

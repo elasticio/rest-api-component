@@ -83,7 +83,7 @@ describe('httpRequest action', () => {
         await processAction.call(emitter, msg, cfg);
         throw new Error('This line should never be called because await above should throw an error');
       } catch (err) {
-        expect(err.message).equal('OAuth2 provider hasn`t returned a refresh_token. Possible reason: missing access_type:offline additional parameter');
+        expect(err.message).equal('No refresh tokens were returned by the OAuth2 provider. Try to add access_type:offline as an additional parameter');
       }
     });
 

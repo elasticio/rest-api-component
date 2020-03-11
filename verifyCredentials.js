@@ -31,9 +31,9 @@ function verify(credentials) {
     if (!keys) {
       errMessage = 'Error: OAuth2 provider hasn`t returned keys for current credentials';
     } else if (!keys.access_token) {
-      errMessage = `Error: OAuth2 provider hasn't returned an access_token: ${JSON.stringify(keys)}`;
+      errMessage = `Error: No access tokens were returned by the OAuth2 provider: ${JSON.stringify(keys)}`;
     } else if (!keys.refresh_token) {
-      errMessage = 'Error: OAuth2 provider hasn`t returned a refresh_token. Possible reason: missing access_type:offline additional parameter';
+      errMessage = 'Error: No refresh tokens were returned by the OAuth2 provider. Try to add access_type:offline as an additional parameter';
     }
     if (errMessage) {
       this.logger.error(errMessage);

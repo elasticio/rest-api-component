@@ -52,7 +52,7 @@ describe('verifyCredentials test', () => {
         await verify.call(emitter, credentials);
         throw new Error('This line should never be called because await above should throw an error');
       } catch (err) {
-        expect(err.message).equal('Error: OAuth2 provider hasn\'t returned an access_token: {"error":"invalid_client_secret"}');
+        expect(err.message).equal('Error: No access tokens were returned by the OAuth2 provider: {"error":"invalid_client_secret"}');
       }
     });
 
@@ -64,7 +64,7 @@ describe('verifyCredentials test', () => {
         await verify.call(emitter, credentials);
         throw new Error('This line should never be called because await above should throw an error');
       } catch (err) {
-        expect(err.message).equal('Error: OAuth2 provider hasn`t returned a refresh_token. Possible reason: missing access_type:offline additional parameter');
+        expect(err.message).equal('Error: No refresh tokens were returned by the OAuth2 provider. Try to add access_type:offline as an additional parameter');
       }
     });
   });
