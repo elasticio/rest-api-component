@@ -1,3 +1,6 @@
+## 1.2.3 (March 26, 2020)
+* New Jsonata expressions getFlowVariables and getPathrough
+
 ## 1.2.2 (March 19, 2020)
 * Add binary message types to list for processing them as attachments
 
