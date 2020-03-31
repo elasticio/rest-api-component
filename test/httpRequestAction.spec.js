@@ -282,6 +282,7 @@ describe('httpRequest action', () => {
         body: {
           url: 'http://example.com',
         },
+        passthrough: { test: 'test' },
       };
       const cfg = {
         splitResult: true,
@@ -292,7 +293,8 @@ describe('httpRequest action', () => {
         auth: {},
       };
       const responseMessage = ['first', 'second', 'third'];
-      nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
+      nock(JsonataTransform.jsonataTransform(msg,
+        { expression: cfg.reader.url }, emitter))
         .intercept('/', 'POST')
         .reply((uri, requestBody) => [
           200,
