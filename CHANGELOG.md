@@ -1,4 +1,4 @@
-## 1.2.4 (April 8, 2020)
+## 1.2.4 (April 9, 2020)
 * Fix `No refresh tokens were returned by the OAuth2 provider` error for credentials with non-expiring refresh_token
 
 ## 1.2.3 (April 1, 2020)
