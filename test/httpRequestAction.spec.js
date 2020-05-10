@@ -618,7 +618,7 @@ describe('httpRequest action', () => {
         const responseMessage = 'hello world';
 
         nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
-          .post('/', body => body.replace(/[\n\r]/g, '').match(/foo.+bar.+baz.+qwe.+hello.+world/))
+          .post('/', (body) => body.replace(/[\n\r]/g, '').match(/foo.+bar.+baz.+qwe.+hello.+world/))
           .delay(20 + Math.random() * 200)
           .reply((uri, requestBody) => {
             done();
