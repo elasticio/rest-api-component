@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars,arrow-parens */
 
 const { JsonataTransform } = require('@elastic.io/component-commons-library');
 const sinon = require('sinon');
