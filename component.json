@@ -98,6 +98,10 @@
             "doNotFollowRedirects": "Do not follow redirects"
           },
           "prompt": "Follow redirects (default)"
+        },
+        "enableRateLimit": {
+          "label": "Enable Rate Limit",
+          "viewClass": "CheckBoxView"
         }
       }
     }

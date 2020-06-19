@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@elastic.io/component-commons-library": "1.1.2",
+        "@elastic.io/maester-client": "1.0.0",
         "duplex": "1.0.0",
         "elasticio-node": "0.0.9",
         "elasticio-rest-node": "1.2.1",
