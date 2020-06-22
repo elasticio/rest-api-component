@@ -56,6 +56,11 @@
             "doNotFollowRedirects": "Do not follow redirects"
           },
           "prompt": "Follow redirects (default)"
+        },
+        "delayBetweenCalls": {
+          "label": "Delay Between Calls",
+          "viewClass": "TextFieldView",
+          "note": "Delay Between Calls in seconds"
         }
       }
     }

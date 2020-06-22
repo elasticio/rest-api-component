@@ -1487,4 +1487,40 @@ describe('httpRequest action', () => {
       });
     });
   });
+
+  describe('delay between calls', () => {
+    it('should wait delayBetweenCalls', async () => {
+      const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
+        .returns(Promise.resolve());
+      const msg = {
+        body: {
+          url: 'http://example.com',
+        },
+        passthrough: { test: 'test' },
+      };
+      const cfg = {
+        splitResult: true,
+        reader: {
+          url: 'url',
+          method: 'POST',
+        },
+        auth: {},
+        delayBetweenCalls: 'ew',
+      };
+      const responseMessage = ['first', 'second', 'third'];
+      nock(JsonataTransform.jsonataTransform(msg,
+        { expression: cfg.reader.url }, emitter))
+        .intercept('/', 'POST')
+        .reply((uri, requestBody) => [
+          200,
+          responseMessage,
+        ]);
+      await processAction.call(emitter, msg, cfg);
+      // eslint-disable-next-line no-unused-expressions
+      expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
+      expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
+      expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+    });
+  });
 });
