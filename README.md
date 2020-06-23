@@ -44,7 +44,8 @@ The example below shows the development team creation using the REST API compone
     - 503: Service Unavailable
     - 504: Gateway Timeout
     - DNS lookup timeout
-4. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
+4. ``Do not verify servers certificate (unsafe)`` - disable verifying the server certificate - **unsafe**.
+5. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
 
 ## Authorisation methods
 

@@ -1,3 +1,6 @@
+## 1.2.7 (June 24, 2020)
+* Add checkBox to not verify servers certificate
+
 ## 1.2.6 (June 6, 2020)
 * Remove update docs on deploy script
 
