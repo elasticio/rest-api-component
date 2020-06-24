@@ -1503,7 +1503,7 @@ describe('httpRequest action', () => {
           method: 'POST',
         },
         auth: {},
-        delayBetweenCalls: 'ew',
+        delayBetweenCalls: '5',
       };
       const responseMessage = ['first', 'second', 'third'];
       nock(JsonataTransform.jsonataTransform(msg,
