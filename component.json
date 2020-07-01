@@ -61,6 +61,11 @@
           "label": "Delay Between Calls",
           "viewClass": "TextFieldView",
           "note": "Delay Between Calls in seconds"
+        },
+        "callCount": {
+          "label": "Call Count per Delay",
+          "viewClass": "TextFieldView",
+          "note": "Call Count per Delay"
         }
       }
     }
@@ -108,6 +113,11 @@
           "label": "Delay Between Calls",
           "viewClass": "TextFieldView",
           "note": "Delay Between Calls in seconds"
+        },
+        "callCount": {
+          "label": "Call Count per Delay",
+          "viewClass": "TextFieldView",
+          "note": "Call Count per Delay"
         }
       }
     }
