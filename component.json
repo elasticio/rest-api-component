@@ -57,15 +57,15 @@
           },
           "prompt": "Follow redirects (default)"
         },
-        "delayBetweenCalls": {
-          "label": "Delay Between Calls",
+        "delay": {
+          "label": "Delay",
           "viewClass": "TextFieldView",
-          "note": "Delay Between Calls in seconds"
+          "note": "Delay calling the next request after the previous request. Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more than 1140 seconds (19 minutes due to platform limitation). The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. "
         },
         "callCount": {
-          "label": "Call Count per Delay",
+          "label": "Call Count",
           "viewClass": "TextFieldView",
-          "note": "Call Count per Delay"
+          "note": "Value should be set only in pair with `Delay`, default to 1"
         }
       }
     }
@@ -109,15 +109,15 @@
           },
           "prompt": "Follow redirects (default)"
         },
-        "delayBetweenCalls": {
-          "label": "Delay Between Calls",
+        "delay": {
+          "label": "Delay",
           "viewClass": "TextFieldView",
-          "note": "Delay Between Calls in seconds"
+          "note": "Delay calling the next request after the previous request. Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more than 1140 seconds (19 minutes due to platform limitation). The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. "
         },
         "callCount": {
-          "label": "Call Count per Delay",
+          "label": "Call Count",
           "viewClass": "TextFieldView",
-          "note": "Call Count per Delay"
+          "note": "Value should be set only in pair with `Delay`, default to 1"
         }
       }
     }

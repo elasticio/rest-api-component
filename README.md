@@ -45,6 +45,10 @@ The example below shows the development team creation using the REST API compone
     - 504: Gateway Timeout
     - DNS lookup timeout
 4. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
+5. ``Delay`` - If you want to slow down requests to your API you can set delay value (in seconds) and the component will delay calling the next request after the previous request.
+Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more than 1140 seconds (19 minutes due to platform limitation). 
+The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. 
+6. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
 
 ## Authorisation methods
 
