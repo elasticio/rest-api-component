@@ -1,7 +1,7 @@
 ## 1.2.8 (July 6, 2020)
 * Add configuration fields: `Delay` and `Call Count` for rate limit
 
-## 1.2.6 (June 6, 2020)	## 1.2.8 (July 6, 2020)
+## 1.2.6 (June 6, 2020)
 * Remove update docs on deploy script
 
 ## 1.2.5 (May 19, 2020)
