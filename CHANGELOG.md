@@ -1,5 +1,6 @@
 ## 1.2.8 (July 6, 2020)
 * Add configuration fields: `Delay` and `Call Count` for rate limit
+* Update sailor version to 2.6.13
 
 ## 1.2.6 (June 6, 2020)
 * Remove update docs on deploy script
