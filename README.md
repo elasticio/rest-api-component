@@ -23,7 +23,7 @@ This document covers the following topics:
 
 The example below shows the development team creation using the REST API component with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service").
 
-![alt text](https://user-images.githubusercontent.com/16806832/63769383-591d5b80-c8db-11e9-8b57-5890d4d4f21f.png)
+![image](https://user-images.githubusercontent.com/16806832/85531423-6d270c00-b617-11ea-8a43-317932364a85.png)
 *Numbers show: (1) The URL and method of the REST API resource, (2) the HTTP call headers. (3) configuration options and (4) follow redirect mode.*
 
 1.  HTTP methods and URL
@@ -44,11 +44,12 @@ The example below shows the development team creation using the REST API compone
     - 503: Service Unavailable
     - 504: Gateway Timeout
     - DNS lookup timeout
-4. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
-5. ``Delay`` - If you want to slow down requests to your API you can set delay value (in seconds) and the component will delay calling the next request after the previous request.
+4. ``Do not verify SSL certificate (unsafe)`` - disable verifying the server certificate - **unsafe**.
+5. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
+6. ``Delay`` - If you want to slow down requests to your API you can set delay value (in seconds) and the component will delay calling the next request after the previous request.
 Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more than 1140 seconds (19 minutes due to platform limitation). 
 The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. 
-6. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
+7. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
 
 ## Authorisation methods
 

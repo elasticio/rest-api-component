@@ -48,6 +48,10 @@
           "label": "Retry on failure",
           "viewClass": "CheckBoxView"
         },
+        "noStrictSSL": {
+          "label": "Do not verify SSL certificate (unsafe)",
+          "viewClass": "CheckBoxView"
+        },
         "followRedirect": {
           "label": "Follow redirect mode",
           "viewClass": "SelectView",
@@ -99,6 +103,11 @@
         "enableRebound": {
           "label": "Retry on failure",
           "viewClass": "CheckBoxView"
+        },
+        "noStrictSSL": {
+          "label": "Do not verify SSL certificate (unsafe)",
+          "viewClass": "CheckBoxView",
+          "note": "Unsafe option! Check it if you want to disable SSL certificate verification on the server"
         },
         "followRedirect": {
           "label": "Follow redirect mode",
