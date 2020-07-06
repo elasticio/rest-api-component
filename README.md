@@ -46,6 +46,11 @@ The example below shows the development team creation using the REST API compone
     - DNS lookup timeout
 4. ``Do not verify SSL certificate (unsafe)`` - disable verifying the server certificate - **unsafe**.
 5. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
+6. ``Delay`` - If you want to slow down requests to your API you can set delay value (in seconds) and the component will delay calling the next request after the previous request.
+Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more than 1140 seconds (19 minutes due to platform limitation). 
+The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. 
+Notice: See [Known Limitations](#known-limitations) about `Delay` value.
+7. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
 
 ## Authorisation methods
 
@@ -226,6 +231,10 @@ If it get parse exception, it return response as is.`
 
 **3.** OAuth2 authentication strategy limitation: [Access Token Response](https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/) contains `refresh_token` optional property, but due to EIO platform limitation it is required.
 Possible solution - use access_type:offline in additional parameters (may not work in some cases).
+
+**4.** We suggest not to set Delay value more then time period between two executions of the flow.
+Please keep in mind that delay can influence on time of next execution. 
+For example, the flow has type `Ordinary` and scheduled to execution for every 1 minute, but the delay is set to 120 sec, so the next execution will be started only after 120 sec, instead of 1 minute.
 
 [circle-image]: https://circleci.com/gh/elasticio/rest-api-component.svg?style=svg&circle-token=2bf8e1f60133011d1fdea9505afdbabbd12b0c7b
 [circle-url]: https://circleci.com/gh/elasticio/rest-api-component

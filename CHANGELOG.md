@@ -1,3 +1,7 @@
+## 1.2.8 (July 6, 2020)
+* Add configuration fields: `Delay` and `Call Count` for rate limit
+* Update sailor version to 2.6.13
+
 ## 1.2.7 (June 24, 2020)
 * Add checkBox to not verify servers certificate
 
