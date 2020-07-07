@@ -10,6 +10,8 @@
         "required": false,
         "viewClass": "HTTPAuthView"
       }
+    },
+    "oauth2" : {
     }
   },
   "triggers": {
