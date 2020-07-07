@@ -10,10 +10,6 @@
         "required": false,
         "viewClass": "HTTPAuthView"
       }
-    },
-    "oauth2" : {
-      "auth_uri" : "{{authUri}}",
-      "token_uri" : "{{tokenUri}}"
     }
   },
   "triggers": {
