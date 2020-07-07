@@ -1538,12 +1538,12 @@ describe('httpRequest action', () => {
           method: 'GET',
         },
         auth: {},
-        requestTimeout: '1000',
+        requestTimeoutPeriod: '1000',
       };
 
       await processAction.call(emitter, msg, cfg);
       expect(emitter.emit.getCall(0).args[0]).to.be.equals('error');
-      expect(emitter.emit.getCall(0).args[1].message).to.be.equals(`Timeout error! Waiting for response more than ${cfg.requestTimeout} ms`);
+      expect(emitter.emit.getCall(0).args[1].message).to.be.equals(`Timeout error! Waiting for response more than ${cfg.requestTimeoutPeriod} ms`);
     });
   });
 });

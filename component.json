@@ -71,7 +71,7 @@
           "viewClass": "TextFieldView",
           "note": "Value should be set only in pair with `Delay`, default to 1"
         },
-        "requestTimeout": {
+        "requestTimeoutPeriod": {
           "label": "Request timeout",
           "viewClass": "TextFieldView",
           "note": "Timeout period in milliseconds while component waiting for server response, default to 100000 (100 sec)"
