@@ -51,7 +51,7 @@ Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more 
 The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. 
 Notice: See [Known Limitations](#known-limitations) about `Delay` value.
 7. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
-8. ``Request timeout`` - Timeout period in milliseconds while component waiting for server response, also can be configured with REQUEST_TIMEOUT environment variable. Default to 100000 (100 sec).
+8. ``Request timeout`` - Timeout period in milliseconds while component waiting for server response, also can be configured with REQUEST_TIMEOUT environment variable. Defaults to 100000 (100 sec).
 
 ## Authorisation methods
 
