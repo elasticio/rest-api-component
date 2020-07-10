@@ -1,4 +1,4 @@
-## 1.2.9 (July 6, 2020)
+## 1.2.9 (July 10, 2020)
 * Timeout configuration field
 
 ## 1.2.8 (July 6, 2020)
