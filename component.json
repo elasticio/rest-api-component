@@ -74,7 +74,7 @@
         "requestTimeoutPeriod": {
           "label": "Request timeout",
           "viewClass": "TextFieldView",
-          "note": "Timeout period in milliseconds while component waiting for server response, should be positive integer, default to 100000 (100 sec)"
+          "note": "Timeout period in milliseconds while component waiting for server response, should be positive integer (1-1140000), default to 100000 (100 sec)"
         }
       }
     }
@@ -136,7 +136,7 @@
         "requestTimeoutPeriod": {
           "label": "Request timeout",
           "viewClass": "TextFieldView",
-          "note": "Timeout period in milliseconds while component waiting for server response, should be positive integer, default to 100000 (100 sec)"
+          "note": "Timeout period in milliseconds while component waiting for server response, should be positive integer (1-1140000), default to 100000 (100 sec)"
         }
       }
     }
