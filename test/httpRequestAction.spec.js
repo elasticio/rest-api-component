@@ -11,10 +11,43 @@ const { stub } = sinon;
 
 const processAction = require('../lib/actions/httpRequestAction').process;
 
+function setSecretStub(secret) {
+  nock(process.env.ELASTICIO_API_URI)
+    .get(`/v2/workspaces/${process.env.ELASTICIO_WORKSPACE_ID}/secrets/${secret.id}`)
+    .basicAuth({
+      user: process.env.ELASTICIO_API_USERNAME,
+      pass: process.env.ELASTICIO_API_KEY,
+    })
+    .reply(200, {
+      data: {
+        id: secret.id,
+        type: 'secret',
+        attributes: secret,
+      },
+    });
+}
+
+function setNoAuthSecretStub(id) {
+  setSecretStub({ type: 'noauth', id });
+}
+
 describe('httpRequest action', () => {
   let emitter;
   let currentlyEmitting = false;
+  let originalEnv;
   beforeEach(() => {
+    originalEnv = process.env;
+    process.env = Object.assign(
+      {},
+      process.env,
+      {
+        ELASTICIO_API_URI: 'http://test.api.e.io',
+        ELASTICIO_WORKSPACE_ID: '12344321',
+        ELASTICIO_API_USERNAME: 'user',
+        ELASTICIO_API_KEY: 'password',
+      },
+    );
+
     sinon.restore();
     emitter = {
       emit: stub().returns(new Promise((resolve) => {
@@ -28,6 +61,9 @@ describe('httpRequest action', () => {
       })),
       logger,
     };
+  });
+  afterEach(() => {
+    process.env = originalEnv;
   });
 
   describe('oauth2 credentials', () => {
@@ -291,7 +327,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method: 'POST',
         },
-        auth: {},
+        secretId: '1234',
       };
       const responseMessage = ['first', 'second', 'third'];
       nock(JsonataTransform.jsonataTransform(msg,
@@ -301,6 +337,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
@@ -322,7 +359,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method: 'POST',
         },
-        auth: {},
+        secretId: 55555,
       };
       const responseMessage = ['first', 'second', 'third'];
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
@@ -332,6 +369,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
@@ -351,7 +389,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method: 'POST',
         },
-        auth: {},
+        secretId: Math.random(),
       };
       const responseMessage = { data: 'not array' };
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
@@ -361,6 +399,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
@@ -385,7 +424,7 @@ describe('httpRequest action', () => {
             url: 'url',
             method,
           },
-          auth: {},
+          secretId: Math.random(),
         };
 
         const responseMessage = { message: `hello world ${index}` };
@@ -398,6 +437,7 @@ describe('httpRequest action', () => {
             responseMessage,
           ]);
 
+        setNoAuthSecretStub(cfg.secretId);
         await processAction.call(emitter, msg, cfg);
         expect(messagesNewMessageWithBodyStub.args[0][0])
           .to.eql(responseMessage);
@@ -417,7 +457,7 @@ describe('httpRequest action', () => {
               },
             ],
           },
-          auth: {},
+          secretId: Math.random(),
         };
 
         if (method !== 'GET') {
@@ -448,7 +488,7 @@ describe('httpRequest action', () => {
               '{}',
             ];
           });
-
+        setNoAuthSecretStub(cfg.secretId);
         await processAction.call(emitter, msg, cfg);
       });
     });
@@ -470,7 +510,7 @@ describe('httpRequest action', () => {
             },
           ],
         },
-        auth: {},
+        secretId: Math.random(),
       };
 
       const responseMessage = 'hello world';
@@ -489,7 +529,7 @@ describe('httpRequest action', () => {
             responseMessage,
           ];
         });
-
+      setNoAuthSecretStub(cfg.secretId);
       processAction.call(emitter, msg, cfg);
     });
     it('should pass multiple headers properly', (done) => {
@@ -518,7 +558,7 @@ describe('httpRequest action', () => {
             },
           ],
         },
-        auth: {},
+        secretId: Math.random(),
       };
 
       const responseMessage = 'hello world';
@@ -540,6 +580,7 @@ describe('httpRequest action', () => {
           ];
         });
 
+      setNoAuthSecretStub(cfg.secretId);
       processAction.call(emitter, msg, cfg);
     });
     describe('when request body is passed', () => {
@@ -563,7 +604,7 @@ describe('httpRequest action', () => {
               encoding: 'raw',
             },
           },
-          auth: {},
+          secretId: Math.random(),
         };
 
         const responseMessage = 'hello world';
@@ -578,7 +619,7 @@ describe('httpRequest action', () => {
               responseMessage,
             ];
           });
-
+        setNoAuthSecretStub(cfg.secretId);
         processAction.call(emitter, msg, cfg);
       });
       it('should properly pass formdata body', (done) => {
@@ -612,7 +653,7 @@ describe('httpRequest action', () => {
             },
             headers: [],
           },
-          auth: {},
+          secretId: '1234',
         };
 
         const responseMessage = 'hello world';
@@ -627,7 +668,7 @@ describe('httpRequest action', () => {
               responseMessage,
             ];
           });
-
+        setNoAuthSecretStub(cfg.secretId);
         processAction.call(emitter, msg, cfg);
       });
     });
@@ -647,13 +688,14 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
         .intercept('/', method)
         .delay(20 + Math.random() * 200)
         .replyWithError('something awful happened');
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg).catch((e) => {
         expect(e.message).to.be.eql('Error: something awful happened');
       });
@@ -676,14 +718,14 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
         .intercept('/', method)
         .delay(20 + Math.random() * 200)
         .replyWithError('something awful happened');
-
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg).catch((e) => {
         expect(e.message).to.be.eql('Error: something awful happened');
         expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
@@ -704,7 +746,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
@@ -712,6 +754,7 @@ describe('httpRequest action', () => {
         .delay(20 + Math.random() * 200)
         .reply(408, 'Error');
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
       expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal(
@@ -732,9 +775,10 @@ describe('httpRequest action', () => {
         reader: {
           url: 'url',
         },
-        auth: {},
+        secretId: '1234',
       };
 
+      setNoAuthSecretStub(cfg.secretId);
       try {
         await processAction.call(emitter, msg, cfg);
       } catch (err) {
@@ -752,9 +796,10 @@ describe('httpRequest action', () => {
         reader: {
           method: 'GET',
         },
-        auth: {},
+        secretId: '1234',
       };
 
+      setNoAuthSecretStub(cfg.secretId);
       try {
         await processAction.call(emitter, msg, cfg);
       } catch (err) {
@@ -773,9 +818,9 @@ describe('httpRequest action', () => {
           url: 'url',
           method: 'GETT',
         },
-        auth: {},
+        secretId: '1234',
       };
-
+      setNoAuthSecretStub(cfg.secretId);
       try {
         await processAction.call(emitter, msg, cfg);
       } catch (err) {
@@ -803,7 +848,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = '';
@@ -813,6 +858,7 @@ describe('httpRequest action', () => {
         .delay(20 + Math.random() * 200)
         .reply(204, responseMessage);
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
 
       // eslint-disable-next-line no-unused-expressions
@@ -834,7 +880,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = '';
@@ -844,6 +890,7 @@ describe('httpRequest action', () => {
         .delay(20 + Math.random() * 200)
         .reply(204, responseMessage);
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
@@ -865,7 +912,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
@@ -875,6 +922,7 @@ describe('httpRequest action', () => {
           'Content-Type': 'application/xml',
         });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
@@ -903,7 +951,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
@@ -912,7 +960,7 @@ describe('httpRequest action', () => {
         .reply(200, '<xml>foo</xml>', {
           'Content-Type': 'application/xml',
         });
-
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
@@ -933,7 +981,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
@@ -943,6 +991,7 @@ describe('httpRequest action', () => {
           'Content-Type': 'application/xml',
         });
 
+      setNoAuthSecretStub(cfg.secretId);
       try {
         await processAction.call(emitter, msg, cfg);
         throw new Error('This line should never be called because await above should throw an error');
@@ -966,7 +1015,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = 'boom!';
@@ -978,7 +1027,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
-
+      setNoAuthSecretStub(cfg.secretId);
       try {
         await processAction.call(emitter, msg, cfg);
         throw new Error('This line should never be called because await above should throw an error');
@@ -1002,7 +1051,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = '{"id":"1", "name":"John", "surname":"Malkovich"}';
@@ -1014,6 +1063,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql({
         headers: {},
@@ -1043,6 +1093,7 @@ describe('httpRequest action', () => {
           method,
         },
         auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = '{"id":"1", "name":"John", "surname":"Malkovich"}';
@@ -1054,6 +1105,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql(
         {
@@ -1079,7 +1131,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = '<first>1</first><second>2</second>';
@@ -1091,6 +1143,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: responseMessage });
     });
@@ -1110,7 +1163,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method,
         },
-        auth: {},
+        secretId: '1234',
       };
 
       const responseMessage = '<first>1</first><second>2</second>';
@@ -1122,6 +1175,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
         body: { result: responseMessage },
@@ -1150,7 +1204,7 @@ describe('httpRequest action', () => {
         },
         followRedirect: 'followRedirects',
         dontThrowErrorFlg: true,
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://example.com')
@@ -1161,6 +1215,7 @@ describe('httpRequest action', () => {
         .get('/Login')
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
         body: {
@@ -1189,7 +1244,7 @@ describe('httpRequest action', () => {
           method,
         },
         followRedirect: 'followRedirects',
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://example.com')
@@ -1200,6 +1255,7 @@ describe('httpRequest action', () => {
         .get('/Login')
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
@@ -1223,7 +1279,7 @@ describe('httpRequest action', () => {
         },
         dontThrowErrorFlg: true,
         followRedirect: 'doNotFollowRedirects',
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://example.com')
@@ -1235,6 +1291,7 @@ describe('httpRequest action', () => {
         .get('/Login')
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
         headers:
@@ -1263,7 +1320,7 @@ describe('httpRequest action', () => {
           method,
         },
         followRedirect: 'doNotFollowRedirects',
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://example.com')
@@ -1275,6 +1332,7 @@ describe('httpRequest action', () => {
         .get('/Login')
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
@@ -1297,7 +1355,7 @@ describe('httpRequest action', () => {
           method,
         },
         followRedirect: 'doNotFollowRedirects',
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://example.com')
@@ -1309,6 +1367,7 @@ describe('httpRequest action', () => {
         .get('/Login')
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
@@ -1331,7 +1390,7 @@ describe('httpRequest action', () => {
           method,
         },
         followRedirect: 'followRedirects',
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://example.com')
@@ -1343,6 +1402,7 @@ describe('httpRequest action', () => {
         .get('/Login')
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
@@ -1407,7 +1467,7 @@ describe('httpRequest action', () => {
           },
           headers: [],
         },
-        auth: {},
+        secretId: '1234',
       };
 
       nock('http://qwre.com')
@@ -1420,6 +1480,7 @@ describe('httpRequest action', () => {
           200,
           rawString,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, inputMsg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
     });
@@ -1448,9 +1509,10 @@ describe('httpRequest action', () => {
         },
         followRedirect: 'followRedirects',
         dontThrowErrorFlg: true,
-        auth: {},
+        secretId: '1234',
       };
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0].statusCode).to.eql(404);
       // TODO: should be 'Not Found' but nock doesn't allow statusMessage to be mocked https://github.com/nock/nock/issues/469
@@ -1476,9 +1538,10 @@ describe('httpRequest action', () => {
         },
         followRedirect: 'followRedirects',
         dontThrowErrorFlg: false,
-        auth: {},
+        secretId: '1234',
       };
 
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       expect(emitter.emit.callCount).to.equal(2);
       expect(emitter.emit.args[0][0]).to.equal('error');
@@ -1502,7 +1565,7 @@ describe('httpRequest action', () => {
           url: 'url',
           method: 'POST',
         },
-        auth: {},
+        secretId: '1234',
         delay: '20',
         callCount: '4',
       };
@@ -1514,6 +1577,7 @@ describe('httpRequest action', () => {
           200,
           responseMessage,
         ]);
+      setNoAuthSecretStub(cfg.secretId);
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
