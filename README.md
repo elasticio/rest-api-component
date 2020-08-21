@@ -12,9 +12,7 @@ This document covers the following topics:
 *   [Authorisation methods](#authorisation-methods)
 *   [Defining HTTP headers](#defining-http-headers)
 *   [Defining request body](#defining-request-body)
-*   [Working with XML Response](#working-with-xml)
-*   [HTTP Headers in Response](#http-headers)
-*   [Redirection](#redirection)
+*   [HTTP Headers](#http-headers)
 *   [Attachments](#attachments)
 *   [Exception handling](#exception-handling)
 *   [Known Limitations](#known-limitations)
@@ -24,6 +22,7 @@ This document covers the following topics:
 The example below shows the development team creation using the REST API component with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service").
 
 ![image](https://user-images.githubusercontent.com/22715422/87129437-000fa980-c29a-11ea-920c-cc161db6cb3a.png)
+
 *Numbers show: (1) The URL and method of the REST API resource, (2) the HTTP call headers. (3) configuration options and (4) follow redirect mode.*
 
 1.  HTTP methods and URL
@@ -35,7 +34,7 @@ The example below shows the development team creation using the REST API compone
 3. Configuration options
  * ``Don`t throw Error on Failed Calls`` - if enabled return error, error code and stacktrace in message body otherwise throw error in flow.
  * ``Split Result if it is an Array`` - if enabled and response is array, creates message for each item of array. Otherwise create one message with response array.  
- * ``Retry on failure`` - enabling [rebound](https://support.elastic.io/support/solutions/articles/14000044750-why-and-where-we-use-the-rebound-) feature for following HTTP status codes:
+ * ``Retry on failure`` - enabling [rebound](https://docs.elastic.io/getting-started/rebound.html) feature for following HTTP status codes:
     - 408: Request Timeout
     - 423: Locked
     - 429: Too Many Requests
@@ -228,8 +227,8 @@ If it get parse exception, it return response as is.`
 
 **2.** Attachments limitations:
 
-    1. Maximal possible size for an attachment is 10 MB.
-    2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
+-  Maximal possible size for an attachment is 10 MB.
+-  Attachments mechanism does not work with [Local Agent Installation](https://docs.elastic.io/getting-started/local-agent.html)
 
 **3.** OAuth2 authentication strategy limitation: [Access Token Response](https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/) contains `refresh_token` optional property, but due to EIO platform limitation it is required.
 Possible solution - use access_type:offline in additional parameters (may not work in some cases).
