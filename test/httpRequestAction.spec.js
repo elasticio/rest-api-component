@@ -112,12 +112,12 @@ describe('httpRequest action', () => {
           grant_type: 'refresh_token',
           client_id: cfg.auth.oauth2.clientId,
           client_secret: cfg.auth.oauth2.clientSecret,
+          scope: '',
         })
         .reply((uri, requestBody) => [
           200,
           responseMessage,
         ]);
-
 
       const requestNock = nock(msg.body.url, {
         reqheaders: {
@@ -167,12 +167,12 @@ describe('httpRequest action', () => {
           grant_type: 'refresh_token',
           client_id: cfg.auth.oauth2.clientId,
           client_secret: cfg.auth.oauth2.clientSecret,
+          scope: '',
         })
         .reply((uri, requestBody) => [
           200,
           responseMessage,
         ]);
-
 
       const requestNock = nock(msg.body.url, {
         reqheaders: {
@@ -255,12 +255,12 @@ describe('httpRequest action', () => {
           grant_type: 'refresh_token',
           client_id: cfg.auth.oauth2.clientId,
           client_secret: cfg.auth.oauth2.clientSecret,
+          scope: '',
         })
         .reply((uri, requestBody) => [
           200,
           responseMessage,
         ]);
-
 
       const requestNock = nock(msg.body.url, {
         reqheaders: {
@@ -372,7 +372,6 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
     });
   });
-
 
   describe('when all params is correct', () => {
     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method, index) => {
@@ -1429,7 +1428,6 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
     });
   });
-
 
   describe('404 not found', () => {
     it('404 not found && dontThrowErrorFlg true', async () => {
