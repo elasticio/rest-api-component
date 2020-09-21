@@ -4,6 +4,7 @@ const { JsonataTransform } = require('@elastic.io/component-commons-library');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const nock = require('nock');
+const fs = require('fs');
 const { messages } = require('elasticio-node');
 const logger = require('@elastic.io/component-logger')();
 
@@ -1355,7 +1356,7 @@ describe('httpRequest action', () => {
     });
   });
   describe('attachments', () => {
-    it('action message with attachments', async () => {
+    it('action message with inbound attachments', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
         .returns(Promise.resolve());
       const inputMsg = {
@@ -1425,6 +1426,34 @@ describe('httpRequest action', () => {
           rawString,
         ]);
       await processAction.call(emitter, inputMsg, cfg);
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
+    });
+
+    it('action message with outbount attachment', async () => {
+      const inputMsg = {
+        body: {},
+      };
+
+      const cfg = {
+        reader: {
+          url: '"https://example.com/image.png"',
+          method: 'GET',
+          headers: [],
+        },
+        auth: {},
+      };
+
+      nock('https://example.com')
+          .get('/image.png')
+          .reply((uri, requestBody) => [
+            200,
+            fs.readFileSync('./logo.png'),
+            {'Content-Type': 'image/png'},
+          ]);
+
+
+
+      const val = await processAction.call(emitter, inputMsg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
     });
   });
