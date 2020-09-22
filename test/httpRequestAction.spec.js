@@ -310,9 +310,9 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
-      expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
-      expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql('first');
+      expect(messagesNewMessageWithBodyStub.args[1][0].body).to.be.eql('second');
+      expect(messagesNewMessageWithBodyStub.args[2][0].body).to.be.eql('third');
     });
     it('should emit array of item if splitResult=false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -341,7 +341,7 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql({ result: responseMessage });
+      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql(responseMessage);
     });
     it('splitResult=true should be ignored if item is not array', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -370,7 +370,7 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
+      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql(responseMessage);
     });
   });
 
@@ -404,7 +404,7 @@ describe('httpRequest action', () => {
           ]);
 
         await processAction.call(emitter, msg, cfg);
-        expect(messagesNewMessageWithBodyStub.args[0][0])
+        expect(messagesNewMessageWithBodyStub.args[0][0].body)
           .to.eql(responseMessage);
       });
     });
@@ -852,7 +852,11 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
-        .to.deep.equal({});
+        .to.deep.include({
+          headers: {},
+          body: undefined,
+          statusCode: 204,
+        });
     });
     it('Valid XML Response && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -920,7 +924,7 @@ describe('httpRequest action', () => {
 
       await processAction.call(emitter, msg, cfg);
 
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
         .to.deep.equal(
           { xml: 'foo' },
         );
@@ -1060,7 +1064,7 @@ describe('httpRequest action', () => {
           responseMessage,
         ]);
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql(
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body).to.deep.eql(
         {
           id: '1',
           name: 'John',
@@ -1097,7 +1101,7 @@ describe('httpRequest action', () => {
           responseMessage,
         ]);
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: responseMessage });
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body).to.eql(responseMessage);
     });
     it('XML string without content-type   && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1129,7 +1133,7 @@ describe('httpRequest action', () => {
         ]);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
-        body: { result: responseMessage },
+        body: responseMessage,
         headers: {},
         statusCode: 200,
         statusMessage: null,
@@ -1206,7 +1210,7 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
         .to
         .deep
         .equal({ state: 'after redirection' });
@@ -1281,7 +1285,7 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
         .to
         .deep
         .equal({ state: 'before redirection' });
@@ -1315,7 +1319,7 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
         .to
         .deep
         .equal({ state: 'before redirection' });
@@ -1349,7 +1353,7 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
         .to
         .deep
         .equal({ state: 'after redirection' });
@@ -1426,7 +1430,7 @@ describe('httpRequest action', () => {
           rawString,
         ]);
       await processAction.call(emitter, inputMsg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body).to.eql(rawString);
     });
 
     it('action message with outbount attachment', async () => {
@@ -1444,17 +1448,15 @@ describe('httpRequest action', () => {
       };
 
       nock('https://example.com')
-          .get('/image.png')
-          .reply((uri, requestBody) => [
-            200,
-            fs.readFileSync('./logo.png'),
-            {'Content-Type': 'image/png'},
-          ]);
-
-
+        .get('/image.png')
+        .reply((uri, requestBody) => [
+          200,
+          fs.readFileSync('./logo.png'),
+          { 'Content-Type': 'image/png' },
+        ]);
 
       const val = await processAction.call(emitter, inputMsg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
+      // expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
     });
   });
 
@@ -1549,9 +1551,9 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
-      expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
-      expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql('first');
+      expect(messagesNewMessageWithBodyStub.args[1][0].body).to.be.eql('second');
+      expect(messagesNewMessageWithBodyStub.args[2][0].body).to.be.eql('third');
     });
   });
 
