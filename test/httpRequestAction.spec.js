@@ -310,9 +310,9 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql('first');
-      expect(messagesNewMessageWithBodyStub.args[1][0].body).to.be.eql('second');
-      expect(messagesNewMessageWithBodyStub.args[2][0].body).to.be.eql('third');
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep.include({ body: 'first', statusCode: 200 });
+      expect(messagesNewMessageWithBodyStub.args[1][0]).to.deep.include({ body: 'second', statusCode: 200 });
+      expect(messagesNewMessageWithBodyStub.args[2][0]).to.deep.include({ body: 'third', statusCode: 200 });
     });
     it('should emit array of item if splitResult=false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -341,7 +341,8 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql(responseMessage);
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep
+        .include({ body: responseMessage, statusCode: 200 });
     });
     it('splitResult=true should be ignored if item is not array', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -370,7 +371,8 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql(responseMessage);
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep
+        .include({ body: responseMessage, statusCode: 200 });
     });
   });
 
@@ -404,8 +406,8 @@ describe('httpRequest action', () => {
           ]);
 
         await processAction.call(emitter, msg, cfg);
-        expect(messagesNewMessageWithBodyStub.args[0][0].body)
-          .to.eql(responseMessage);
+        expect(messagesNewMessageWithBodyStub.args[0][0])
+          .to.deep.include({ body: responseMessage, statusCode: 200 });
       });
     });
     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method) => {
@@ -821,7 +823,8 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
 
       // eslint-disable-next-line no-unused-expressions
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.exist;
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep
+        .include({ statusCode: 204, body: undefined });
     });
     it('No response body && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -924,10 +927,11 @@ describe('httpRequest action', () => {
 
       await processAction.call(emitter, msg, cfg);
 
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
-        .to.deep.equal(
-          { xml: 'foo' },
-        );
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
+        .to.deep.include({
+          body: { xml: 'foo' },
+          statusCode: 200,
+        });
     });
     it('Invalid XML Response', async () => {
       const method = 'POST';
@@ -1064,13 +1068,17 @@ describe('httpRequest action', () => {
           responseMessage,
         ]);
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body).to.deep.eql(
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql({
+        body:
         {
           id: '1',
           name: 'John',
           surname: 'Malkovich',
         },
-      );
+        statusCode: 200,
+        headers: {},
+        statusMessage: null,
+      });
     });
     it('XML string without content-type   && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1101,7 +1109,12 @@ describe('httpRequest action', () => {
           responseMessage,
         ]);
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body).to.eql(responseMessage);
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({
+        body: responseMessage,
+        statusCode: 200,
+        statusMessage: null,
+        headers: {},
+      });
     });
     it('XML string without content-type   && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
