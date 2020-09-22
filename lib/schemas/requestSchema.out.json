@@ -25,7 +25,29 @@
     "attachments": {
       "type": "object",
       "required": false,
-      "title": "Attachments"
+      "title": "Attachments",
+      "properties": {
+        "url": {
+          "type": "string",
+          "required": true,
+          "title": "URL"
+        },
+        "size": {
+          "type": "number",
+          "required": true,
+          "title": "Size in bytes of the attachment"
+        },
+        "content-type": {
+          "type": "string",
+          "required": true,
+          "title": "Content Type"
+        },
+        "sourceUrl": {
+          "type": "string",
+          "required": true,
+          "title": "Source URL"
+        }
+      }
     }
   }
 }
