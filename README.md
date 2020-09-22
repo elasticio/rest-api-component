@@ -16,6 +16,7 @@ This document covers the following topics:
 *   [HTTP Headers in Response](#http-headers)
 *   [Redirection](#redirection)
 *   [Attachments](#attachments)
+*   [Output](#output)
 *   [Exception handling](#exception-handling)
 *   [Known Limitations](#known-limitations)
 
@@ -209,6 +210,19 @@ Rest-api component automatically load binary data to attachments with next conte
 * application/x-binary
 * application/binary
 * application/macbinary
+
+## Output
+The messages produced by the REST API component will have the following properties:
+* `headers`: Object containing the HTTP response headers
+* `statusCode`: HTTP Status Code of the Response. Number between `100` and `599` 
+* `statusMessage`: Human readable equivalent to the response code
+* `body`: The contents of the HTTP response body:
+  * When the content type header includes `json`, then the result will be parsed into the corresponding object
+  * When the content type header includes `xml`, then the result will be converted into the JSON equivalent of the represented XML using the same rules as above
+  * When the content type header includes one of `image`, `msword`, `msexcel`, `pdf`, `csv`, `octet-stream` or `binary` the request body contents will be stored as an attachment and there will be no `body` property in the outgoing message
+  * When there is no body (because the content-length is 0), then there will be no `body` property in the outbound message.
+  * If there is another content type, then the response will be treated as text
+  * If the content type header is omitted, then an attempt to convert the result to JSON will be made. If that fails, then the result will be treated as if it were text.
 
 ## Exception handling
 Rest API component uses exception handling logic below: 
