@@ -930,6 +930,7 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to.deep.include({
           body: { xml: 'foo' },
+          headers: { 'content-type': 'application/xml' },
           statusCode: 200,
         });
     });
@@ -1226,7 +1227,11 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .include({ body: { state: 'after redirection' }, statusCode: 200 });
+        .include({
+          body: { state: 'after redirection' },
+          statusCode: 200,
+          headers: { 'content-type': 'application/json' },
+        });
     });
     it('redirect request false && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1301,7 +1306,11 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .include({ body: { state: 'before redirection' }, statusCode: 302 });
+        .include({
+          body: { state: 'before redirection' },
+          statusCode: 302,
+          headers: { location: 'http://example.com/Login', 'content-type': 'application/json' },
+        });
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1329,13 +1338,17 @@ describe('httpRequest action', () => {
           'Content-Type': 'application/json',
         })
         .get('/Login')
-        .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
+        .reply(200, '{"state": "after redirection"}', { 'content-type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .include({ body: { state: 'before redirection' }, statusCode: 302 });
+        .include({
+          body: { state: 'before redirection' },
+          statusCode: 302,
+          headers: { location: 'http://example.com/Login', 'content-type': 'application/json' },
+        });
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1369,7 +1382,11 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .include({ body: { state: 'after redirection' }, statusCode: 200 });
+        .include({
+          body: { state: 'after redirection' },
+          statusCode: 200,
+          headers: { 'content-type': 'application/json' },
+        });
     });
   });
   describe('attachments', () => {
