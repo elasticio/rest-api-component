@@ -27,7 +27,7 @@
       },
       "type": "polling",
       "metadata": {
-        "out": {}
+        "out": "./lib/schemas/requestSchema.out.json"
       },
       "fields": {
         "reader": {
@@ -88,7 +88,7 @@
         "link": "/components/rest-api/index.html#http-request-1"
       },
       "metadata": {
-        "out": {}
+        "out": "./lib/schemas/requestSchema.out.json"
       },
       "fields": {
         "reader": {

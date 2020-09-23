@@ -4,8 +4,10 @@ const { JsonataTransform } = require('@elastic.io/component-commons-library');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const nock = require('nock');
+const fs = require('fs');
 const { messages } = require('elasticio-node');
 const logger = require('@elastic.io/component-logger')();
+const client = require('elasticio-rest-node')();
 
 const { stub } = sinon;
 
@@ -112,12 +114,12 @@ describe('httpRequest action', () => {
           grant_type: 'refresh_token',
           client_id: cfg.auth.oauth2.clientId,
           client_secret: cfg.auth.oauth2.clientSecret,
+          scope: '',
         })
         .reply((uri, requestBody) => [
           200,
           responseMessage,
         ]);
-
 
       const requestNock = nock(msg.body.url, {
         reqheaders: {
@@ -167,12 +169,12 @@ describe('httpRequest action', () => {
           grant_type: 'refresh_token',
           client_id: cfg.auth.oauth2.clientId,
           client_secret: cfg.auth.oauth2.clientSecret,
+          scope: '',
         })
         .reply((uri, requestBody) => [
           200,
           responseMessage,
         ]);
-
 
       const requestNock = nock(msg.body.url, {
         reqheaders: {
@@ -255,12 +257,12 @@ describe('httpRequest action', () => {
           grant_type: 'refresh_token',
           client_id: cfg.auth.oauth2.clientId,
           client_secret: cfg.auth.oauth2.clientSecret,
+          scope: '',
         })
         .reply((uri, requestBody) => [
           200,
           responseMessage,
         ]);
-
 
       const requestNock = nock(msg.body.url, {
         reqheaders: {
@@ -309,9 +311,9 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
-      expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
-      expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep.include({ body: 'first', statusCode: 200 });
+      expect(messagesNewMessageWithBodyStub.args[1][0]).to.deep.include({ body: 'second', statusCode: 200 });
+      expect(messagesNewMessageWithBodyStub.args[2][0]).to.deep.include({ body: 'third', statusCode: 200 });
     });
     it('should emit array of item if splitResult=false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -340,7 +342,8 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql({ result: responseMessage });
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep
+        .include({ body: responseMessage, statusCode: 200 });
     });
     it('splitResult=true should be ignored if item is not array', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -369,10 +372,10 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledOnce).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql(responseMessage);
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep
+        .include({ body: responseMessage, statusCode: 200 });
     });
   });
-
 
   describe('when all params is correct', () => {
     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method, index) => {
@@ -405,7 +408,7 @@ describe('httpRequest action', () => {
 
         await processAction.call(emitter, msg, cfg);
         expect(messagesNewMessageWithBodyStub.args[0][0])
-          .to.eql(responseMessage);
+          .to.deep.include({ body: responseMessage, statusCode: 200 });
       });
     });
     ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method) => {
@@ -821,7 +824,8 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
 
       // eslint-disable-next-line no-unused-expressions
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.exist;
+      expect(messagesNewMessageWithBodyStub.args[0][0]).to.deep
+        .include({ statusCode: 204, body: undefined });
     });
     it('No response body && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -852,7 +856,11 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
-        .to.deep.equal({});
+        .to.deep.include({
+          headers: {},
+          body: undefined,
+          statusCode: 204,
+        });
     });
     it('Valid XML Response && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -921,9 +929,11 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
 
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
-        .to.deep.equal(
-          { xml: 'foo' },
-        );
+        .to.deep.include({
+          body: { xml: 'foo' },
+          headers: { 'content-type': 'application/xml' },
+          statusCode: 200,
+        });
     });
     it('Invalid XML Response', async () => {
       const method = 'POST';
@@ -1060,13 +1070,17 @@ describe('httpRequest action', () => {
           responseMessage,
         ]);
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql(
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.eql({
+        body:
         {
           id: '1',
           name: 'John',
           surname: 'Malkovich',
         },
-      );
+        statusCode: 200,
+        headers: {},
+        statusMessage: null,
+      });
     });
     it('XML string without content-type   && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1097,7 +1111,12 @@ describe('httpRequest action', () => {
           responseMessage,
         ]);
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: responseMessage });
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({
+        body: responseMessage,
+        statusCode: 200,
+        statusMessage: null,
+        headers: {},
+      });
     });
     it('XML string without content-type   && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1129,7 +1148,7 @@ describe('httpRequest action', () => {
         ]);
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.deep.equal({
-        body: { result: responseMessage },
+        body: responseMessage,
         headers: {},
         statusCode: 200,
         statusMessage: null,
@@ -1209,7 +1228,11 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'after redirection' });
+        .include({
+          body: { state: 'after redirection' },
+          statusCode: 200,
+          headers: { 'content-type': 'application/json' },
+        });
     });
     it('redirect request false && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1284,7 +1307,11 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'before redirection' });
+        .include({
+          body: { state: 'before redirection' },
+          statusCode: 302,
+          headers: { location: 'http://example.com/Login', 'content-type': 'application/json' },
+        });
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1312,13 +1339,17 @@ describe('httpRequest action', () => {
           'Content-Type': 'application/json',
         })
         .get('/Login')
-        .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
+        .reply(200, '{"state": "after redirection"}', { 'content-type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'before redirection' });
+        .include({
+          body: { state: 'before redirection' },
+          statusCode: 302,
+          headers: { location: 'http://example.com/Login', 'content-type': 'application/json' },
+        });
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1352,11 +1383,15 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'after redirection' });
+        .include({
+          body: { state: 'after redirection' },
+          statusCode: 200,
+          headers: { 'content-type': 'application/json' },
+        });
     });
   });
   describe('attachments', () => {
-    it('action message with attachments', async () => {
+    it('action message with inbound attachments', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
         .returns(Promise.resolve());
       const inputMsg = {
@@ -1426,10 +1461,65 @@ describe('httpRequest action', () => {
           rawString,
         ]);
       await processAction.call(emitter, inputMsg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to
+        .include({ body: rawString, statusCode: 200 });
+    });
+
+    it('action message with outbound attachment', async () => {
+      const inputMsg = {
+        body: {},
+      };
+
+      const fileContents = fs.readFileSync('./logo.png');
+
+      const cfg = {
+        reader: {
+          url: '"https://example.com/image.png"',
+          method: 'GET',
+          headers: [],
+        },
+        auth: {},
+      };
+
+      sinon.stub(client.resources.storage, 'createSignedUrl').returns(Promise.resolve({
+        get_url: 'http://example.com/getUrl',
+        put_url: 'http://example.com/putUrl',
+      }));
+
+      nock('http://example.com')
+        .put('/putUrl')
+        .reply((uri, requestBody) => {
+          expect(requestBody).to.deep.equal(fileContents.toString('hex'));
+          return [
+            200,
+          ];
+        });
+
+      nock('https://example.com')
+        .get('/image.png')
+        .reply((uri, requestBody) => [
+          200,
+          fileContents,
+          {
+            'Content-Type': 'image/png',
+            'content-length': fileContents.length,
+          },
+        ]);
+
+      const val = await processAction.call(emitter, inputMsg, cfg);
+      expect(emitter.emit.args[0][1].body).to.deep.eql({
+        statusCode: 200,
+        statusMessage: null,
+        headers: { 'content-type': 'image/png', 'content-length': '22421' },
+        attachments: {
+          'content-type': 'image/png',
+          size: '22421',
+          sourceUrl: 'https://example.com/image.png',
+          url: 'http://example.com/getUrl',
+        },
+      });
     });
   });
-
 
   describe('404 not found', () => {
     it('404 not found && dontThrowErrorFlg true', async () => {
@@ -1522,9 +1612,9 @@ describe('httpRequest action', () => {
       await processAction.call(emitter, msg, cfg);
       // eslint-disable-next-line no-unused-expressions
       expect(messagesNewMessageWithBodyStub.calledThrice).to.be.true;
-      expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
-      expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
-      expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+      expect(messagesNewMessageWithBodyStub.args[0][0].body).to.be.eql('first');
+      expect(messagesNewMessageWithBodyStub.args[1][0].body).to.be.eql('second');
+      expect(messagesNewMessageWithBodyStub.args[2][0].body).to.be.eql('third');
     });
   });
 
