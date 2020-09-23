@@ -1223,10 +1223,10 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'after redirection' });
+        .include({ body: { state: 'after redirection' }, statusCode: 200 });
     });
     it('redirect request false && dontThrowErrorFlg true', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1298,10 +1298,10 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'before redirection' });
+        .include({ body: { state: 'before redirection' }, statusCode: 302 });
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1332,10 +1332,10 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'before redirection' });
+        .include({ body: { state: 'before redirection' }, statusCode: 302 });
     });
     it('redirect request false POST && dontThrowErrorFlg false', async () => {
       const messagesNewMessageWithBodyStub = stub(messages, 'newMessageWithBody')
@@ -1366,10 +1366,10 @@ describe('httpRequest action', () => {
         .reply(200, '{"state": "after redirection"}', { 'Content-Type': 'application/json' });
 
       await processAction.call(emitter, msg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body)
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0])
         .to
         .deep
-        .equal({ state: 'after redirection' });
+        .include({ body: { state: 'after redirection' }, statusCode: 200 });
     });
   });
   describe('attachments', () => {
@@ -1443,7 +1443,8 @@ describe('httpRequest action', () => {
           rawString,
         ]);
       await processAction.call(emitter, inputMsg, cfg);
-      expect(messagesNewMessageWithBodyStub.lastCall.args[0].body).to.eql(rawString);
+      expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to
+        .include({ body: rawString, statusCode: 200 });
     });
 
     it('action message with outbount attachment', async () => {
