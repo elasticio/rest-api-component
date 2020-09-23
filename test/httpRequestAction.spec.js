@@ -49,6 +49,7 @@ describe('httpRequest action', () => {
     );
 
     sinon.restore();
+    currentlyEmitting = false;
     emitter = {
       emit: stub().returns(new Promise((resolve) => {
         // eslint-disable-next-line no-unused-expressions
@@ -64,6 +65,10 @@ describe('httpRequest action', () => {
   });
   afterEach(() => {
     process.env = originalEnv;
+  });
+
+  afterEach(() => {
+    delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
   });
 
   describe('oauth2 credentials', () => {
@@ -1584,6 +1589,33 @@ describe('httpRequest action', () => {
       expect(messagesNewMessageWithBodyStub.args[0][0]).to.be.eql('first');
       expect(messagesNewMessageWithBodyStub.args[1][0]).to.be.eql('second');
       expect(messagesNewMessageWithBodyStub.args[2][0]).to.be.eql('third');
+    });
+  });
+
+  describe('timeout configuration', () => {
+    it('should fail on small timeout', async () => {
+      const msg = {
+        body: {
+          url: 'https://httpstat.us/200?sleep=5000',
+        },
+        passthrough: { test: 'test' },
+      };
+      const cfg = {
+        splitResult: true,
+        reader: {
+          url: 'url',
+          method: 'GET',
+        },
+        auth: {},
+        requestTimeoutPeriod: '1000',
+      };
+
+      // Workaround for https://github.com/Readify/httpstatus/issues/79
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.getCall(0).args[0]).to.be.equals('error');
+      expect(emitter.emit.getCall(0).args[1].message).to.be.equals(`Timeout error! Waiting for response more than ${cfg.requestTimeoutPeriod} ms`);
     });
   });
 });

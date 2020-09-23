@@ -1,3 +1,15 @@
+## 1.2.12 (September 25, 2020)
+* Revert changes to url encoding
+
+## 1.2.11 (September 6, 2020)
+* Fix url encoding
+
+## 1.2.10 (August 25, 2020)
+* Fix `application/x-www-form-urlencoded` encoding bug
+
+## 1.2.9 (July 10, 2020)
+* Timeout configuration field
+
 ## 1.2.8 (July 6, 2020)
 * Add configuration fields: `Delay` and `Call Count` for rate limit
 * Update sailor version to 2.6.13
