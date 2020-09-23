@@ -55,6 +55,13 @@ Notice: See [Known Limitations](#known-limitations) about `Delay` value.
 8. ``Request timeout`` - Timeout period in milliseconds (1-1140000) while component waiting for server response, also can be configured with REQUEST_TIMEOUT environment variable if configuration field is not provided. Defaults to 100000 (100 sec).
 Notice: Specified for component REQUEST_TIMEOUT enviroment variable would be overwritten by specified value of Request timeout, default value would be also overwritten
 
+#### Environment variables 
+| NAME                       | DESCRIPTION                                                                             | DEFAULT   | OPTIONAL |
+|----------------------------|-----------------------------------------------------------------------------------------|-----------|----------|
+| REQUEST_TIMEOUT            | HTTP authorization request timeout in milliseconds.                                                   | 10000     | true     |
+| REQUEST_RETRY_DELAY        | Delay between authorization retry attempts in milliseconds                                            | 5000      | true     |
+| REQUEST_MAX_RETRY          | Number of HTTP authorization request retry attempts.                                                  | 3         | true     |
+
 ## Authorisation methods
 
 To use the REST API component with any restricted access API provide the authorisation information.
