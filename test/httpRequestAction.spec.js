@@ -7,6 +7,7 @@ const nock = require('nock');
 const fs = require('fs');
 const { messages } = require('elasticio-node');
 const logger = require('@elastic.io/component-logger')();
+const client = require('elasticio-rest-node')();
 
 const { stub } = sinon;
 
@@ -1464,10 +1465,12 @@ describe('httpRequest action', () => {
         .include({ body: rawString, statusCode: 200 });
     });
 
-    it('action message with outbount attachment', async () => {
+    it('action message with outbound attachment', async () => {
       const inputMsg = {
         body: {},
       };
+
+      const fileContents = fs.readFileSync('./logo.png');
 
       const cfg = {
         reader: {
@@ -1478,16 +1481,43 @@ describe('httpRequest action', () => {
         auth: {},
       };
 
+      sinon.stub(client.resources.storage, 'createSignedUrl').returns(Promise.resolve({
+        get_url: 'http://example.com/getUrl',
+        put_url: 'http://example.com/putUrl',
+      }));
+
+      nock('http://example.com')
+        .put('/putUrl')
+        .reply((uri, requestBody) => {
+          expect(requestBody).to.deep.equal(fileContents.toString('hex'));
+          return [
+            200,
+          ];
+        });
+
       nock('https://example.com')
         .get('/image.png')
         .reply((uri, requestBody) => [
           200,
-          fs.readFileSync('./logo.png'),
-          { 'Content-Type': 'image/png' },
+          fileContents,
+          {
+            'Content-Type': 'image/png',
+            'content-length': fileContents.length,
+          },
         ]);
 
       const val = await processAction.call(emitter, inputMsg, cfg);
-      // expect(messagesNewMessageWithBodyStub.lastCall.args[0]).to.eql({ result: rawString });
+      expect(emitter.emit.args[0][1].body).to.deep.eql({
+        statusCode: 200,
+        statusMessage: null,
+        headers: { 'content-type': 'image/png', 'content-length': '22421' },
+        attachments: {
+          'content-type': 'image/png',
+          size: '22421',
+          sourceUrl: 'https://example.com/image.png',
+          url: 'http://example.com/getUrl',
+        },
+      });
     });
   });
 
