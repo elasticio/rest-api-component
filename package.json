@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@elastic.io/component-commons-library": "1.1.2",
+        "axios": "0.20.0",
         "duplex": "1.0.0",
         "elasticio-node": "0.0.9",
         "elasticio-rest-node": "1.2.1",
@@ -37,7 +38,7 @@
         "eslint-config-airbnb-base": "13.1.0",
         "eslint-plugin-import": "2.14.0",
         "mocha": "6.1.4",
-        "nock": "9.0.14",
+        "nock": "13.0.4",
         "sinon": "7.3.2"
     }
 }
