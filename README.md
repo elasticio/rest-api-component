@@ -52,6 +52,13 @@ The `Call Count` value by default is 1. If you want to use another value, please
 Notice: See [Known Limitations](#known-limitations) about `Delay` value.
 7. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
 
+#### Environment variables 
+| NAME                       | DESCRIPTION                                                                             | DEFAULT   | OPTIONAL |
+|----------------------------|-----------------------------------------------------------------------------------------|-----------|----------|
+| REQUEST_TIMEOUT            | HTTP authorization request timeout in milliseconds.                                                   | 10000     | true     |
+| REQUEST_RETRY_DELAY        | Delay between authorization retry attempts in milliseconds                                            | 5000      | true     |
+| REQUEST_MAX_RETRY          | Number of HTTP authorization request retry attempts.                                                  | 3         | true     |
+
 ## Authorisation methods
 
 To use the REST API component with any restricted access API provide the authorisation information.
