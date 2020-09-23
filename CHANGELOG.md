@@ -3,6 +3,7 @@
 * Update dependencies
 * Remove logging of sensitive data
 * Include attachment information in outbound message
+* Use node version 14
 
 ## 1.2.12 (September 25, 2020)
 * Revert changes to url encoding
