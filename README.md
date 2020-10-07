@@ -12,11 +12,10 @@ This document covers the following topics:
 *   [Authorisation methods](#authorisation-methods)
 *   [Defining HTTP headers](#defining-http-headers)
 *   [Defining request body](#defining-request-body)
-*   [Working with XML Response](#working-with-xml)
-*   [HTTP Headers in Response](#http-headers)
-*   [Redirection](#redirection)
 *   [Working with Cookies](#cookies)
+*   [HTTP Headers](#http-headers)
 *   [Attachments](#attachments)
+*   [Output](#output)
 *   [Exception handling](#exception-handling)
 *   [Known Limitations](#known-limitations)
 
@@ -24,7 +23,8 @@ This document covers the following topics:
 
 The example below shows the development team creation using the REST API component with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service").
 
-![alt text](https://user-images.githubusercontent.com/16806832/63769383-591d5b80-c8db-11e9-8b57-5890d4d4f21f.png)
+![image](https://user-images.githubusercontent.com/22715422/87129437-000fa980-c29a-11ea-920c-cc161db6cb3a.png)
+
 *Numbers show: (1) The URL and method of the REST API resource, (2) the HTTP call headers. (3) configuration options and (4) follow redirect mode.*
 
 1.  HTTP methods and URL
@@ -36,7 +36,7 @@ The example below shows the development team creation using the REST API compone
 3. Configuration options
  * ``Don`t throw Error on Failed Calls`` - if enabled return error, error code and stacktrace in message body otherwise throw error in flow.
  * ``Split Result if it is an Array`` - if enabled and response is array, creates message for each item of array. Otherwise create one message with response array.  
- * ``Retry on failure`` - enabling [rebound](https://support.elastic.io/support/solutions/articles/14000044750-why-and-where-we-use-the-rebound-) feature for following HTTP status codes:
+ * ``Retry on failure`` - enabling [rebound](https://docs.elastic.io/getting-started/rebound.html) feature for following HTTP status codes:
     - 408: Request Timeout
     - 423: Locked
     - 429: Too Many Requests
@@ -45,7 +45,22 @@ The example below shows the development team creation using the REST API compone
     - 503: Service Unavailable
     - 504: Gateway Timeout
     - DNS lookup timeout
-4. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
+4. ``Do not verify SSL certificate (unsafe)`` - disable verifying the server certificate - **unsafe**.
+5. ``Follow redirect mode`` - If you want disable Follow Redirect functionality, you can use option ``Follow redirect mode``.By default ``Follow redirect mode`` option has value ``Follow redirects``.
+6. ``Delay`` - If you want to slow down requests to your API you can set delay value (in seconds) and the component will delay calling the next request after the previous request.
+Time for the delay is calculated as `Delay`/ `Call Count` and shouldn't be more than 1140 seconds (19 minutes due to platform limitation). 
+The `Call Count` value by default is 1. If you want to use another value, please set the `Call Count` field. 
+Notice: See [Known Limitations](#known-limitations) about `Delay` value.
+7. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
+8. ``Request timeout`` - Timeout period in milliseconds (1-1140000) while component waiting for server response, also can be configured with REQUEST_TIMEOUT environment variable if configuration field is not provided. Defaults to 100000 (100 sec).
+Notice: Specified for component REQUEST_TIMEOUT enviroment variable would be overwritten by specified value of Request timeout, default value would be also overwritten
+
+#### Environment variables 
+| NAME                       | DESCRIPTION                                                                             | DEFAULT   | OPTIONAL |
+|----------------------------|-----------------------------------------------------------------------------------------|-----------|----------|
+| REQUEST_TIMEOUT            | HTTP authorization request timeout in milliseconds.                                                   | 10000     | true     |
+| REQUEST_RETRY_DELAY        | Delay between authorization retry attempts in milliseconds                                            | 5000      | true     |
+| REQUEST_MAX_RETRY          | Number of HTTP authorization request retry attempts.                                                  | 3         | true     |
 
 ## Authorisation methods
 
@@ -215,6 +230,19 @@ Rest-api component automatically load binary data to attachments with next conte
 * application/binary
 * application/macbinary
 
+## Output
+The messages produced by the REST API component will have the following properties:
+* `headers`: Object containing the HTTP response headers
+* `statusCode`: HTTP Status Code of the Response. Number between `100` and `599` 
+* `statusMessage`: Human readable equivalent to the response code
+* `body`: The contents of the HTTP response body:
+  * When the content type header includes `json`, then the result will be parsed into the corresponding object
+  * When the content type header includes `xml`, then the result will be converted into the JSON equivalent of the represented XML using the same rules as above
+  * When the content type header includes one of `image`, `msword`, `msexcel`, `pdf`, `csv`, `octet-stream` or `binary` the request body contents will be stored as an attachment and there will be no `body` property in the outgoing message
+  * When there is no body (because the content-length is 0), then there will be no `body` property in the outbound message.
+  * If there is another content type, then the response will be treated as text
+  * If the content type header is omitted, then an attempt to convert the result to JSON will be made. If that fails, then the result will be treated as if it were text.
+
 ## Exception handling
 Rest API component uses exception handling logic below: 
 ![Exception handling logic](https://user-images.githubusercontent.com/13310949/41960520-9bd468ca-79f8-11e8-83f4-d9b2096deb6d.png)
@@ -233,11 +261,15 @@ If it get parse exception, it return response as is.`
 
 **2.** Attachments limitations:
 
-    1. Maximal possible size for an attachment is 10 MB.
-    2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
+-  Maximal possible size for an attachment is 10 MB.
+-  Attachments mechanism does not work with [Local Agent Installation](https://docs.elastic.io/getting-started/local-agent.html)
 
 **3.** OAuth2 authentication strategy limitation: [Access Token Response](https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/) contains `refresh_token` optional property, but due to EIO platform limitation it is required.
 Possible solution - use access_type:offline in additional parameters (may not work in some cases).
+
+**4.** We suggest not to set Delay value more then time period between two executions of the flow.
+Please keep in mind that delay can influence on time of next execution. 
+For example, the flow has type `Ordinary` and scheduled to execution for every 1 minute, but the delay is set to 120 sec, so the next execution will be started only after 120 sec, instead of 1 minute.
 
 [circle-image]: https://circleci.com/gh/elasticio/rest-api-component.svg?style=svg&circle-token=2bf8e1f60133011d1fdea9505afdbabbd12b0c7b
 [circle-url]: https://circleci.com/gh/elasticio/rest-api-component

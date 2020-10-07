@@ -1,3 +1,30 @@
+## 2.0.0 (October 7, 2020)
+* Include status code, HTTP headers along with body in produced message
+* Update dependencies
+* Remove logging of sensitive data
+* Include attachment information in outbound message
+* Use node version 14
+* Make use of new OAuth mechanism
+
+## 1.2.12 (September 25, 2020)
+* Revert changes to url encoding
+
+## 1.2.11 (September 6, 2020)
+* Fix url encoding
+
+## 1.2.10 (August 25, 2020)
+* Fix `application/x-www-form-urlencoded` encoding bug
+
+## 1.2.9 (July 10, 2020)
+* Timeout configuration field
+
+## 1.2.8 (July 6, 2020)
+* Add configuration fields: `Delay` and `Call Count` for rate limit
+* Update sailor version to 2.6.13
+
+## 1.2.7 (June 24, 2020)
+* Add checkBox to not verify servers certificate
+
 ## 1.2.6 (June 6, 2020)
 * Remove update docs on deploy script
 
