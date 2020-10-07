@@ -1,4 +1,4 @@
-## 2.0.0 (September 25, 2020)
+## 2.0.0 (October 7, 2020)
 * Include status code, HTTP headers along with body in produced message
 * Update dependencies
 * Remove logging of sensitive data
