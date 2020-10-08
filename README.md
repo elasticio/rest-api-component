@@ -12,10 +12,10 @@ This document covers the following topics:
 *   [Authorisation methods](#authorisation-methods)
 *   [Defining HTTP headers](#defining-http-headers)
 *   [Defining request body](#defining-request-body)
-*   [Working with XML Response](#working-with-xml)
-*   [HTTP Headers in Response](#http-headers)
-*   [Redirection](#redirection)
+*   [Working with Cookies](#cookies)
+*   [HTTP Headers](#http-headers)
 *   [Attachments](#attachments)
+*   [Output](#output)
 *   [Exception handling](#exception-handling)
 *   [Known Limitations](#known-limitations)
 
@@ -24,6 +24,7 @@ This document covers the following topics:
 The example below shows the development team creation using the REST API component with our own [REST API service](https://api.elastic.io/docs "elastic.io REST API service").
 
 ![image](https://user-images.githubusercontent.com/22715422/87129437-000fa980-c29a-11ea-920c-cc161db6cb3a.png)
+
 *Numbers show: (1) The URL and method of the REST API resource, (2) the HTTP call headers. (3) configuration options and (4) follow redirect mode.*
 
 1.  HTTP methods and URL
@@ -35,7 +36,7 @@ The example below shows the development team creation using the REST API compone
 3. Configuration options
  * ``Don`t throw Error on Failed Calls`` - if enabled return error, error code and stacktrace in message body otherwise throw error in flow.
  * ``Split Result if it is an Array`` - if enabled and response is array, creates message for each item of array. Otherwise create one message with response array.  
- * ``Retry on failure`` - enabling [rebound](https://support.elastic.io/support/solutions/articles/14000044750-why-and-where-we-use-the-rebound-) feature for following HTTP status codes:
+ * ``Retry on failure`` - enabling [rebound](https://docs.elastic.io/getting-started/rebound.html) feature for following HTTP status codes:
     - 408: Request Timeout
     - 423: Locked
     - 429: Too Many Requests
@@ -53,6 +54,13 @@ Notice: See [Known Limitations](#known-limitations) about `Delay` value.
 7. ``Call Count`` - the field should be used only in pair with `Delay`, default to 1.
 8. ``Request timeout`` - Timeout period in milliseconds (1-1140000) while component waiting for server response, also can be configured with REQUEST_TIMEOUT environment variable if configuration field is not provided. Defaults to 100000 (100 sec).
 Notice: Specified for component REQUEST_TIMEOUT enviroment variable would be overwritten by specified value of Request timeout, default value would be also overwritten
+
+#### Environment variables 
+| NAME                       | DESCRIPTION                                                                             | DEFAULT   | OPTIONAL |
+|----------------------------|-----------------------------------------------------------------------------------------|-----------|----------|
+| REQUEST_TIMEOUT            | HTTP authorization request timeout in milliseconds.                                                   | 10000     | true     |
+| REQUEST_RETRY_DELAY        | Delay between authorization retry attempts in milliseconds                                            | 5000      | true     |
+| REQUEST_MAX_RETRY          | Number of HTTP authorization request retry attempts.                                                  | 3         | true     |
 
 ## Authorisation methods
 
@@ -196,6 +204,18 @@ In this case output structure of component will be:
     }
 ```
 
+## Cookies
+
+Sometimes it's required to read and set cookies. To read cookies you should have gain access to the `Set-Cookie` headers of the _HTTP Response_,
+in this case you should check the ``Don`t throw Error on Failed Calls`` option. Please note that HTTP Response may have **multiple**
+`Set-Cookie` headers therefore you should expect to find an **array** of values in the HTTP Response
+
+![image](https://user-images.githubusercontent.com/56208/85700153-66160180-b6dc-11ea-8885-45f8c888dc8a.png)
+
+To _set_ Cookies you could simply use the HTTP header on your _Response_ called `Cookie` to a cookie value to a 
+list of name-value pairs in the form of <cookie-name>=<cookie-value>. Pairs in the list are separated by a semicolon and a space ('; ') 
+like `yummy_cookie=choco; tasty_cookie=strawberry`. More information on setting the cookies can be found [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cookie).
+
 ## Attachments
 Rest API component has opportunity of binary data sending. You just need choose ``multipart/form-data`` Content type and attachments from input message will be included to the request payload automatically.
 
@@ -209,6 +229,19 @@ Rest-api component automatically load binary data to attachments with next conte
 * application/x-binary
 * application/binary
 * application/macbinary
+
+## Output
+The messages produced by the REST API component will have the following properties:
+* `headers`: Object containing the HTTP response headers
+* `statusCode`: HTTP Status Code of the Response. Number between `100` and `599` 
+* `statusMessage`: Human readable equivalent to the response code
+* `body`: The contents of the HTTP response body:
+  * When the content type header includes `json`, then the result will be parsed into the corresponding object
+  * When the content type header includes `xml`, then the result will be converted into the JSON equivalent of the represented XML using the same rules as above
+  * When the content type header includes one of `image`, `msword`, `msexcel`, `pdf`, `csv`, `octet-stream` or `binary` the request body contents will be stored as an attachment and there will be no `body` property in the outgoing message
+  * When there is no body (because the content-length is 0), then there will be no `body` property in the outbound message.
+  * If there is another content type, then the response will be treated as text
+  * If the content type header is omitted, then an attempt to convert the result to JSON will be made. If that fails, then the result will be treated as if it were text.
 
 ## Exception handling
 Rest API component uses exception handling logic below: 
@@ -228,8 +261,8 @@ If it get parse exception, it return response as is.`
 
 **2.** Attachments limitations:
 
-    1. Maximal possible size for an attachment is 10 MB.
-    2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
+-  Maximal possible size for an attachment is 10 MB.
+-  Attachments mechanism does not work with [Local Agent Installation](https://docs.elastic.io/getting-started/local-agent.html)
 
 **3.** OAuth2 authentication strategy limitation: [Access Token Response](https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/) contains `refresh_token` optional property, but due to EIO platform limitation it is required.
 Possible solution - use access_type:offline in additional parameters (may not work in some cases).
