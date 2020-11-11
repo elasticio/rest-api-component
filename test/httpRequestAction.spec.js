@@ -658,7 +658,12 @@ describe('httpRequest action', () => {
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
         .intercept('/', method)
         .delay(20 + Math.random() * 200)
-        .replyWithError('something awful happened');
+        .replyWithError({
+          errno: -3008,
+          code: 'ENOTFOUND',
+          syscall: 'getaddrinfo',
+          hostname: 'foo.example.com',
+        });
       await processAction.call(emitter, msg, cfg).catch((e) => {
         expect(e.message).to.be.eql('Error: something awful happened');
       });
@@ -687,7 +692,12 @@ describe('httpRequest action', () => {
       nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
         .intercept('/', method)
         .delay(20 + Math.random() * 200)
-        .replyWithError('something awful happened');
+        .replyWithError({
+          errno: -3008,
+          code: 'ENOTFOUND',
+          syscall: 'getaddrinfo',
+          hostname: 'foo.example.com',
+        });
 
       await processAction.call(emitter, msg, cfg).catch((e) => {
         expect(e.message).to.be.eql('Error: something awful happened');
@@ -695,7 +705,7 @@ describe('httpRequest action', () => {
       });
     });
 
-    it('connection error && enableRebound true', async () => {
+    it('http error && enableRebound true', async () => {
       const method = 'POST';
       const msg = {
         body: {
@@ -721,6 +731,30 @@ describe('httpRequest action', () => {
       expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
       expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal(
         'Code: 408 Message: HTTP error Body: Error',
+      );
+    });
+
+    it('connection error && enableRebound true', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://foo.example.com',
+        },
+      };
+
+      const cfg = {
+        enableRebound: true,
+        reader: {
+          url: 'url',
+          method,
+        },
+        auth: {},
+      };
+
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal(
+        'Error: getaddrinfo ENOTFOUND foo.example.com',
       );
     });
   });
