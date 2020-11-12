@@ -33,6 +33,9 @@ describe('httpRequest action', () => {
 
   afterEach(() => {
     delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    nock.restore();
+    nock.cleanAll();
+    nock.activate();
   });
 
   describe('oauth2 credentials', () => {
@@ -697,6 +700,7 @@ describe('httpRequest action', () => {
           code: 'ENOTFOUND',
           syscall: 'getaddrinfo',
           hostname: 'foo.example.com',
+          message: 'getaddrinfo ENOTFOUND foo.example.com',
         });
 
       await processAction.call(emitter, msg, cfg).catch((e) => {
@@ -734,7 +738,82 @@ describe('httpRequest action', () => {
       );
     });
 
-    it('connection error && enableRebound true', async () => {
+    it('connection error && enableRebound true && mock', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://foo.example.com',
+        },
+      };
+
+      const cfg = {
+        enableRebound: true,
+        reader: {
+          url: 'url',
+          method,
+        },
+        auth: {},
+      };
+
+      for (let i = 0; i < 5; i += 1) {
+        nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
+          .intercept('/', method)
+          .delay(20 + Math.random() * 200)
+          .replyWithError({
+            errno: -3008,
+            code: 'ENOTFOUND',
+            syscall: 'getaddrinfo',
+            hostname: 'foo.example.com',
+            message: 'getaddrinfo ENOTFOUND foo.example.com',
+          });
+      }
+
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.withArgs('rebound').callCount).to.be.equal(1);
+      // eslint-disable-next-line no-unused-expressions
+      expect(nock.isDone()).to.be.true;
+    });
+
+    it('connection error and then success', async () => {
+      const method = 'POST';
+      const msg = {
+        body: {
+          url: 'http://foo.example.com',
+        },
+      };
+
+      const cfg = {
+        enableRebound: true,
+        reader: {
+          url: 'url',
+          method,
+        },
+        auth: {},
+      };
+
+      nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
+        .intercept('/', method)
+        .delay(20 + Math.random() * 200)
+        .replyWithError({
+          errno: -3008,
+          code: 'ENOTFOUND',
+          syscall: 'getaddrinfo',
+          hostname: 'foo.example.com',
+          message: 'getaddrinfo ENOTFOUND foo.example.com',
+        });
+      nock(JsonataTransform.jsonataTransform(msg, { expression: cfg.reader.url }, emitter))
+        .intercept('/', method)
+        .delay(20 + Math.random() * 200)
+        .reply(200, { OK: 'yes' });
+
+      await processAction.call(emitter, msg, cfg);
+      expect(emitter.emit.withArgs('data').args[0][1].body)
+        .to.eql({ OK: 'yes' });
+      // eslint-disable-next-line no-unused-expressions
+      expect(nock.isDone()).to.be.true;
+    });
+
+    it('connection error && enableRebound true && call through', async () => {
       const method = 'POST';
       const msg = {
         body: {
@@ -756,6 +835,8 @@ describe('httpRequest action', () => {
       expect(emitter.emit.withArgs('rebound').args[0][1]).to.be.equal(
         'Error: getaddrinfo ENOTFOUND foo.example.com',
       );
+      // eslint-disable-next-line no-unused-expressions
+      expect(nock.isDone()).to.be.true;
     });
   });
 
