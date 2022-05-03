@@ -1,3 +1,10 @@
+## 1.2.19 (April 08, 2022)
+
+* Update Sailor version to 2.6.27
+* Update component-commons-library version to 2.0.2
+* Get rid of vulnerabilities in dependencies
+* Add component pusher job to the Circle.ci config
+
 ## 1.2.18 (November 26, 2021)
 * Updated sailor version to 2.6.26
 * Reduced the size of component icon file
