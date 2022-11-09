@@ -1,6 +1,7 @@
-## 1.2.20 (November 04, 2022)
+## 1.2.20 (November 11, 2022)
 * Update Sailor version to 2.7.1
- 
+* Update Node engine to 16.13.2
+
 ## 1.2.19 (April 08, 2022)
 * Update Sailor version to 2.6.27
 * Update component-commons-library version to 2.0.2
