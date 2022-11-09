@@ -1,6 +1,6 @@
 {
   "title": "REST API",
-  "version": "1.2.20-dev.1",
+  "version": "1.2.20",
   "description": "A generic connector for accessing HTTP and REST APIs .",
   "buildType": "docker",
   "deprecated": true,
